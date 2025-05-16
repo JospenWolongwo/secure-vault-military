@@ -1,0 +1,100 @@
+{
+  "APP": {
+    "TITLE": "SecureVault Military",
+    "DESCRIPTION": "Secure document management solution for armed forces"
+  },
+  "AUTH": {
+    "LOGIN": {
+      "TITLE": "Login",
+      "SUBTITLE": "Sign in to your account",
+      "EMAIL": "Email address",
+      "PASSWORD": "Password",
+      "REMEMBER_ME": "Remember me",
+      "FORGOT_PASSWORD": "Forgot password?",
+      "SUBMIT": "Sign in",
+      "NO_ACCOUNT": "Don't have an account?",
+      "CREATE_ACCOUNT": "Create account",
+      "ERRORS": {
+        "REQUIRED": "This field is required",
+        "INVALID_EMAIL": "Please enter a valid email address"
+      }
+    },
+    "REGISTER": {
+      "TITLE": "Create Account",
+      "SUBTITLE": "Create your SecureVault account",
+      "FIRST_NAME": "First name",
+      "LAST_NAME": "Last name",
+      "EMAIL": "Email address",
+      "PASSWORD": "Password",
+      "CONFIRM_PASSWORD": "Confirm password",
+      "SUBMIT": "Sign up",
+      "HAVE_ACCOUNT": "Already have an account?",
+      "LOGIN": "Sign in",
+      "ERRORS": {
+        "PASSWORD_MISMATCH": "Passwords do not match",
+        "PASSWORD_STRENGTH": "Password must be at least 8 characters long and include uppercase, lowercase and numbers"
+      }
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Forgot Password",
+      "SUBTITLE": "Reset your password",
+      "INSTRUCTIONS": "Enter the email address associated with your account and we'll send you a link to reset your password.",
+      "EMAIL": "Email address",
+      "SUBMIT": "Send reset link",
+      "BACK_TO_LOGIN": "Back to login",
+      "SUCCESS": "A password reset link has been sent to your email address.",
+      "ERRORS": {
+        "EMAIL_REQUIRED": "Email is required",
+        "INVALID_EMAIL": "Please enter a valid email address"
+      }
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "Reset Your Password",
+      "SUBTITLE": "Create a new password for your account",
+      "INSTRUCTIONS": "Please enter your new password below. Make sure it's strong and secure.",
+      "PASSWORD": "New password",
+      "CONFIRM_PASSWORD": "Confirm new password",
+      "SUBMIT": "Reset password",
+      "SUCCESS_TITLE": "Password Reset Successful!",
+      "SUCCESS_MESSAGE": "Your password has been successfully updated. You can now log in with your new password.",
+      "BACK_TO_LOGIN": "Back to login",
+      "PASSWORD_HINT": "At least 8 characters, 1 number, 1 uppercase, 1 lowercase",
+      "ERRORS": {
+        "PASSWORD_REQUIRED": "Password is required",
+        "PASSWORD_PATTERN": "Password must be at least 8 characters long and include uppercase, lowercase and numbers",
+        "CONFIRM_PASSWORD_REQUIRED": "Please confirm your password",
+        "PASSWORDS_MISMATCH": "Passwords do not match"
+      }
+    }
+  },
+  "COMMON": {
+    "LOADING": "Loading...",
+    "ERRORS": {
+      "GENERIC": "An error occurred. Please try again later.",
+      "NETWORK": "Unable to connect to the server. Please check your connection.",
+      "UNAUTHORIZED": "Unauthorized. Please log in.",
+      "FORBIDDEN": "You don't have permission to perform this action.",
+      "NOT_FOUND": "The requested resource was not found.",
+      "SERVER_ERROR": "Internal server error. Please contact the administrator."
+    },
+    "BUTTONS": {
+      "SAVE": "Save",
+      "CANCEL": "Cancel",
+      "DELETE": "Delete",
+      "EDIT": "Edit",
+      "BACK": "Back",
+      "NEXT": "Next",
+      "PREVIOUS": "Previous",
+      "CLOSE": "Close",
+      "CONFIRM": "Confirm",
+      "SUBMIT": "Submit"
+    },
+    "VALIDATION": {
+      "REQUIRED": "This field is required",
+      "EMAIL": "Please enter a valid email address",
+      "MIN_LENGTH": "Must be at least {{length}} characters",
+      "MAX_LENGTH": "Must not exceed {{length}} characters",
+      "PATTERN": "Invalid format"
+    }
+  }
+}

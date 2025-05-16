@@ -29,17 +29,20 @@ SecureVault Military (SVM) is a secure document storage and communication platfo
 ### Installation
 
 1. Clone the repository:
+
    ```bash
-   git clone https://github.com/yourusername/secure-vault-military.git
+   git clone https://github.com/JospenWolongwo/secure-vault-military.git
    cd secure-vault-military
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Set up environment variables:
+
    ```bash
    cp .env.example .env
    # Update the environment variables in .env
@@ -82,7 +85,7 @@ Deployment is handled automatically via GitHub Actions. Push to `main` for produ
 
 ## Security
 
-Please report any security issues to security@example.com
+Please report any security issues to jospenwolongwo@gmail.com
 
 ## License
 

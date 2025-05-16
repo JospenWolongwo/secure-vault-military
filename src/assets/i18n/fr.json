@@ -1,0 +1,100 @@
+{
+  "APP": {
+    "TITLE": "SecureVault Militaire",
+    "DESCRIPTION": "Solution sécurisée de gestion documentaire pour les forces armées"
+  },
+  "AUTH": {
+    "LOGIN": {
+      "TITLE": "Connexion",
+      "SUBTITLE": "Connectez-vous à votre compte",
+      "EMAIL": "Adresse email",
+      "PASSWORD": "Mot de passe",
+      "REMEMBER_ME": "Se souvenir de moi",
+      "FORGOT_PASSWORD": "Mot de passe oublié ?",
+      "SUBMIT": "Se connecter",
+      "NO_ACCOUNT": "Vous n'avez pas de compte ?",
+      "CREATE_ACCOUNT": "Créer un compte",
+      "ERRORS": {
+        "REQUIRED": "Ce champ est obligatoire",
+        "INVALID_EMAIL": "Veuillez entrer une adresse email valide"
+      }
+    },
+    "REGISTER": {
+      "TITLE": "Créer un compte",
+      "SUBTITLE": "Créez votre compte SecureVault",
+      "FIRST_NAME": "Prénom",
+      "LAST_NAME": "Nom",
+      "EMAIL": "Adresse email",
+      "PASSWORD": "Mot de passe",
+      "CONFIRM_PASSWORD": "Confirmer le mot de passe",
+      "SUBMIT": "S'inscrire",
+      "HAVE_ACCOUNT": "Vous avez déjà un compte ?",
+      "LOGIN": "Se connecter",
+      "ERRORS": {
+        "PASSWORD_MISMATCH": "Les mots de passe ne correspondent pas",
+        "PASSWORD_STRENGTH": "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre"
+      }
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Mot de passe oublié",
+      "SUBTITLE": "Réinitialisez votre mot de passe",
+      "INSTRUCTIONS": "Entrez l'adresse email associée à votre compte et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "EMAIL": "Adresse email",
+      "SUBMIT": "Envoyer le lien de réinitialisation",
+      "BACK_TO_LOGIN": "Retour à la connexion",
+      "SUCCESS": "Un email de réinitialisation a été envoyé à votre adresse email.",
+      "ERRORS": {
+        "EMAIL_REQUIRED": "L'adresse email est obligatoire",
+        "INVALID_EMAIL": "Veuillez entrer une adresse email valide"
+      }
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "Réinitialiser votre mot de passe",
+      "SUBTITLE": "Créez un nouveau mot de passe pour votre compte",
+      "INSTRUCTIONS": "Veuillez entrer votre nouveau mot de passe ci-dessous. Assurez-vous qu'il est sécurisé.",
+      "PASSWORD": "Nouveau mot de passe",
+      "CONFIRM_PASSWORD": "Confirmer le nouveau mot de passe",
+      "SUBMIT": "Réinitialiser le mot de passe",
+      "SUCCESS_TITLE": "Mot de passe réinitialisé avec succès !",
+      "SUCCESS_MESSAGE": "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "BACK_TO_LOGIN": "Retour à la connexion",
+      "PASSWORD_HINT": "Au moins 8 caractères, 1 chiffre, 1 majuscule, 1 minuscule",
+      "ERRORS": {
+        "PASSWORD_REQUIRED": "Le mot de passe est obligatoire",
+        "PASSWORD_PATTERN": "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre",
+        "CONFIRM_PASSWORD_REQUIRED": "Veuillez confirmer votre mot de passe",
+        "PASSWORDS_MISMATCH": "Les mots de passe ne correspondent pas"
+      }
+    }
+  },
+  "COMMON": {
+    "LOADING": "Chargement...",
+    "ERRORS": {
+      "GENERIC": "Une erreur s'est produite. Veuillez réessayer plus tard.",
+      "NETWORK": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion.",
+      "UNAUTHORIZED": "Accès non autorisé. Veuillez vous connecter.",
+      "FORBIDDEN": "Vous n'avez pas les droits nécessaires pour effectuer cette action.",
+      "NOT_FOUND": "La ressource demandée est introuvable.",
+      "SERVER_ERROR": "Erreur interne du serveur. Veuillez contacter l'administrateur."
+    },
+    "BUTTONS": {
+      "SAVE": "Enregistrer",
+      "CANCEL": "Annuler",
+      "DELETE": "Supprimer",
+      "EDIT": "Modifier",
+      "BACK": "Retour",
+      "NEXT": "Suivant",
+      "PREVIOUS": "Précédent",
+      "CLOSE": "Fermer",
+      "CONFIRM": "Confirmer",
+      "SUBMIT": "Soumettre"
+    },
+    "VALIDATION": {
+      "REQUIRED": "Ce champ est obligatoire",
+      "EMAIL": "Veuillez entrer une adresse email valide",
+      "MIN_LENGTH": "Doit contenir au moins {{length}} caractères",
+      "MAX_LENGTH": "Ne doit pas dépasser {{length}} caractères",
+      "PATTERN": "Format invalide"
+    }
+  }
+}

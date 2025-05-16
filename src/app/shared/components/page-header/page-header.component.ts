@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-page-header',
@@ -16,8 +17,11 @@ import { Router } from '@angular/router';
           <span class="subtitle" *ngIf="subtitle">{{ subtitle }}</span>
         </div>
         
-        <div class="actions" *ngIf="showActionButtons">
-          <ng-content select="[actions]"></ng-content>
+        <div class="header-actions">
+          <app-language-selector class="language-selector"></app-language-selector>
+          <div class="actions" *ngIf="showActionButtons">
+            <ng-content select="[actions]"></ng-content>
+          </div>
         </div>
       </div>
       
@@ -72,9 +76,19 @@ import { Router } from '@angular/router';
         font-size: 1rem;
       }
       
-      .actions {
+      .header-actions {
         display: flex;
-        gap: 0.5rem;
+        align-items: center;
+        gap: 1rem;
+        
+        .language-selector {
+          margin-right: 0.5rem;
+        }
+        
+        .actions {
+          display: flex;
+          gap: 0.5rem;
+        }
       }
       
       .breadcrumb {

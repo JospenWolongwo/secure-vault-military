@@ -38,6 +38,9 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 
+// Modules
+import { LanguageSelectorModule } from './components/language-selector/language-selector.module';
+
 const MATERIAL_MODULES = [
   MatButtonModule,
   MatCardModule,
@@ -64,7 +67,7 @@ const COMPONENTS = [
   LoadingSpinnerComponent,
   PageHeaderComponent,
   ConfirmDialogComponent,
-  NotificationComponent,
+  NotificationComponent
 ];
 
 const DIRECTIVES = [ClickOutsideDirective, AutoFocusDirective];
@@ -79,6 +82,7 @@ const PIPES = [SafeHtmlPipe, FileSizePipe];
     FormsModule,
     ReactiveFormsModule,
     ...MATERIAL_MODULES,
+    LanguageSelectorModule
   ],
   exports: [
     CommonModule,

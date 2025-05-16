@@ -13,6 +13,7 @@ import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './features/auth/auth.module';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
+import { I18nModule } from './core/i18n/i18n.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,6 +21,7 @@ import { ErrorInterceptor } from './core/interceptors/error.interceptor';
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    I18nModule,
     AppRoutingModule,
     CoreModule,
     SharedModule,
