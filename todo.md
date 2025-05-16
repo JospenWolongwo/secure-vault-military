@@ -194,10 +194,12 @@ securevault-military/
 
 ### Phase 7: Finalisation & Déploiement (J28-J30)
 
-- [ ] **Internationalisation**
-    - [ ] Configurer ngx-translate
-    - [ ] Extraire tous les textes dans des fichiers de traduction
-    - [ ] Implémenter le changement de langue
+- [x] **Internationalisation**
+    - [x] Configurer ngx-translate
+    - [x] Extraire les textes dans des fichiers de traduction (en/fr)
+    - [x] Implémenter le changement de langue avec sélecteur
+    - [x] Créer le composant de sélecteur de langue
+    - [x] Configurer la détection automatique de la langue du navigateur
 
 - [ ] **Préparation au Déploiement**
     - [ ] Configurer le build de production
