@@ -239,8 +239,15 @@ export class RegisterComponent implements OnInit {
       firstName: formValue.firstName,
       lastName: formValue.lastName,
       militaryId: formValue.militaryId,
-      // Add other fields as needed
+      rank: formValue.rank,
+      unit: formValue.unit
     };
+    
+    console.log('User data for registration:', {
+      ...userData,
+      password: '***',
+      confirmPassword: '***'
+    });
     
     console.log('Submitting registration with data:', {
       ...userData,

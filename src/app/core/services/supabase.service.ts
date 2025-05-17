@@ -38,19 +38,24 @@ export class SupabaseService implements OnDestroy {
 
   // Sign up a new user
   signUp(email: string, password: string, userData: Partial<User>): Observable<{ user: User | null; error: Error | null }> {
+    // Prepare user metadata
+    const userMetadata = {
+      first_name: userData.firstName || '',
+      last_name: userData.lastName || '',
+      military_id: userData.militaryId || '',
+      rank: userData.rank || '',
+      unit: userData.unit || '',
+      created_at: new Date().toISOString(),
+    };
+    
+    console.log('Sending user metadata to Supabase:', userMetadata);
+    
     return from(
       this.supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-            military_id: userData.militaryId,
-            rank: userData.rank,
-            unit: userData.unit,
-            created_at: new Date().toISOString(),
-          },
+          data: userMetadata
         },
       })
     ).pipe(

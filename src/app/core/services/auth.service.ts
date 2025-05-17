@@ -180,6 +180,17 @@ export class AuthService implements OnDestroy {
       return throwError(() => new Error('AUTH.REGISTER.ERRORS.PASSWORD_MISMATCH'));
     }
     
+    // Log the complete user data for debugging
+    console.log('Registering user with complete data:', {
+      email: userData.email,
+      hasPassword: !!userData.password,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      militaryId: userData.militaryId,
+      rank: userData.rank,
+      unit: userData.unit
+    });
+    
     const { email, password, confirmPassword, ...profileData } = userData;
     
     // Clear any existing session data that might cause conflicts
