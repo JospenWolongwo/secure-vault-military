@@ -19,17 +19,19 @@
       }
     },
     "LOGIN": {
-      "TITLE": "Login",
+      "TITLE": "Sign In",
       "SUBTITLE": "Sign in to your account",
-      "EMAIL": "Email address",
+      "EMAIL": "Email Address",
+      "EMAIL_LABEL": "Email Address",
       "EMAIL_PLACEHOLDER": "Enter your email address",
-      "PASSWORD": "Password",
+      "PASSWORD_LABEL": "Password",
       "PASSWORD_PLACEHOLDER": "Enter your password",
       "REMEMBER_ME": "Remember me",
       "FORGOT_PASSWORD": "Forgot password?",
-      "SUBMIT": "Sign in",
+      "SIGN_IN_BUTTON": "Sign In",
       "NO_ACCOUNT": "Don't have an account?",
-      "CREATE_ACCOUNT": "Create account",
+      "SIGN_UP_LINK": "Sign up",
+      "SUCCESS": "Login successful!",
       "SHOW_PASSWORD": "Show password",
       "HIDE_PASSWORD": "Hide password",
       "ERRORS": {
@@ -40,6 +42,7 @@
     "REGISTER": {
       "TITLE": "Create Account",
       "SUBTITLE": "Create your SecureVault account",
+      "SUCCESS_MESSAGE": "Registration successful! We've sent a verification email to {{email}}. Please check your inbox to verify your account.",
       "FIRST_NAME": "First name",
       "LAST_NAME": "Last name",
       "RANK": "Rank",
@@ -57,8 +60,19 @@
       "ERRORS": {
         "REQUIRED": "This field is required",
         "PASSWORD_MISMATCH": "Passwords do not match",
-        "PASSWORD_STRENGTH": "Password must be at least 8 characters long and include uppercase, lowercase and numbers",
-        "CONFIRM_PASSWORD_REQUIRED": "Please confirm your password"
+        "PASSWORD_STRENGTH": "Password must be at least 8 characters long",
+        "PASSWORD_REQUIREMENTS": "Password must include:",
+        "PASSWORD_UPPERCASE": "At least one uppercase letter (A-Z)",
+        "PASSWORD_LOWERCASE": "At least one lowercase letter (a-z)",
+        "PASSWORD_NUMBER": "At least one number (0-9)",
+        "PASSWORD_SPECIAL": "At least one special character (e.g., !@#$%^&*)",
+        "CONFIRM_PASSWORD_REQUIRED": "Please confirm your password",
+        "EMAIL_TAKEN": "This email is already registered. Please use a different email or try to log in.",
+        "REGISTRATION_FAILED": "Registration failed. Please try again.",
+        "INVALID_PASSWORD": "Invalid password. Please check the requirements and try again.",
+        "WEAK_PASSWORD": "Password is too weak. Please use a stronger password.",
+        "INVALID_EMAIL": "Please enter a valid email address.",
+        "NETWORK_ERROR": "Network error. Please check your connection and try again."
       }
     },
     "FORGOT_PASSWORD": {
@@ -75,6 +89,20 @@
         "INVALID_EMAIL": "Please enter a valid email address",
         "EMAIL_NOT_FOUND": "No account found with this email address.",
         "GENERIC": "Failed to send reset link. Please try again."
+      }
+    },
+    "CONFIRM_EMAIL": {
+      "TITLE": "Verify Your Email",
+      "SUBTITLE": "One last step to activate your account",
+      "INSTRUCTIONS": "We've sent a verification email to your address. Please check your inbox and click the verification link to activate your account.",
+      "CHECK_SPAM": "If you don't see the email, please check your spam or junk folder.",
+      "RESEND_BUTTON": "Resend Verification Email",
+      "SUCCESS": "Verification email sent successfully!",
+      "ERRORS": {
+        "EMAIL_REQUIRED": "Email address is required",
+        "RESEND_FAILED": "Failed to resend verification email. Please try again.",
+        "INVALID_TOKEN": "Invalid or expired verification link.",
+        "GENERIC": "An error occurred. Please try again."
       }
     },
     "RESET_PASSWORD": {
@@ -99,6 +127,7 @@
     }
   },
   "COMMON": {
+    "BACK_TO_LOGIN": "Back to Login",
     "LOADING": "Loading...",
     "ERRORS": {
       "GENERIC": "An error occurred. Please try again later.",

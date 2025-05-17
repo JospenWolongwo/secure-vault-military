@@ -68,6 +68,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     // Check if user is already logged in
     if (this.authService.isAuthenticated) {
       this.router.navigate([this.returnUrl]);
+      return;
     }
 
     // Check for remember me
@@ -78,6 +79,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         rememberMe: true,
       });
     }
+    
+    // Get return URL from route parameters or default to '/dashboard'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
   }
 
   ngOnDestroy(): void {
@@ -107,10 +111,16 @@ export class LoginComponent implements OnInit, OnDestroy {
       .login(email, password)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          // Navigate to the return URL or home page
-          this.router.navigate([this.returnUrl]);
-          this.notificationService.showSuccess('Login successful');
+        next: (response) => {
+          // Show success message
+          this.notificationService.showSuccess('AUTH.LOGIN.SUCCESS');
+          
+          // Navigate to the return URL or dashboard
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+          this.router.navigateByUrl(returnUrl).catch(() => {
+            // If navigation fails (e.g., invalid return URL), go to dashboard
+            this.router.navigate(['/dashboard']);
+          });
         },
         error: (error) => {
           this.loading = false;

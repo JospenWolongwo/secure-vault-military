@@ -74,6 +74,23 @@ export interface User {
   /** Whether the user has completed the initial setup */
   hasCompletedSetup?: boolean;
   
+  /** Whether the user's email is verified */
+  isVerified?: boolean;
+  
+  /** User metadata from Supabase */
+  user_metadata?: {
+    first_name?: string;
+    last_name?: string;
+    role?: string;
+    military_id?: string;
+    rank?: string;
+    unit?: string;
+    [key: string]: any;
+  };
+  
+  /** Email confirmation status */
+  email_confirmed_at?: string | null;
+  
   /** Additional metadata */
   metadata?: {
     [key: string]: any;

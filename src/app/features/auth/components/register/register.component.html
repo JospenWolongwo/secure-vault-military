@@ -98,6 +98,23 @@
           <mat-error *ngIf="registerForm.get('password')?.hasError('minlength')">
             {{ 'AUTH.REGISTER.ERRORS.PASSWORD_STRENGTH' | translate }}
           </mat-error>
+          <mat-error *ngIf="registerForm.get('password')?.hasError('pattern')" class="password-requirements">
+            <div>{{ 'AUTH.REGISTER.ERRORS.PASSWORD_REQUIREMENTS' | translate }}:</div>
+            <ul>
+              <li [class.valid]="hasUppercase(registerForm.get('password')?.value)">
+                {{ 'AUTH.REGISTER.ERRORS.PASSWORD_UPPERCASE' | translate }}
+              </li>
+              <li [class.valid]="hasLowercase(registerForm.get('password')?.value)">
+                {{ 'AUTH.REGISTER.ERRORS.PASSWORD_LOWERCASE' | translate }}
+              </li>
+              <li [class.valid]="hasNumber(registerForm.get('password')?.value)">
+                {{ 'AUTH.REGISTER.ERRORS.PASSWORD_NUMBER' | translate }}
+              </li>
+              <li [class.valid]="hasSpecialChar(registerForm.get('password')?.value)">
+                {{ 'AUTH.REGISTER.ERRORS.PASSWORD_SPECIAL' | translate }}
+              </li>
+            </ul>
+          </mat-error>
         </mat-form-field>
 
 
@@ -118,7 +135,7 @@
           <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
             {{ 'AUTH.REGISTER.ERRORS.CONFIRM_PASSWORD_REQUIRED' | translate }}
           </mat-error>
-          <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')">
+          <mat-error *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch') || registerForm.hasError('passwordMismatch')">
             {{ 'AUTH.REGISTER.ERRORS.PASSWORD_MISMATCH' | translate }}
           </mat-error>
         </mat-form-field>

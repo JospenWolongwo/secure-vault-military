@@ -1,39 +1,34 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { map, catchError, tap, switchMap } from 'rxjs/operators';
 
-import { environment } from '@environments/environment';
+import { SupabaseService } from './supabase.service';
 import { StorageService } from './storage.service';
+import { User } from '../models/user.model';
 
 export interface AuthResponse {
   token?: string;
   refreshToken?: string;
   user?: User;
-}
-
-export interface User {
-  id: string;
-  email: string;
-  role: string;
-  roles?: string[];
+  requiresEmailConfirmation?: boolean;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
-  private readonly AUTH_TOKEN_KEY = 'auth_token';
-  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
+export class AuthService implements OnDestroy {
+  private readonly AUTH_TOKEN_KEY = 'sb:token';
+  private readonly REFRESH_TOKEN_KEY = 'sb:refresh_token';
   private readonly USER_KEY = 'current_user';
-  private apiUrl = `${environment.apiUrl}/auth`;
   
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
   constructor(
-    private http: HttpClient,
+    private supabase: SupabaseService,
     private storageService: StorageService,
     private router: Router
   ) {
@@ -49,92 +44,34 @@ export class AuthService {
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
+  
+  /**
+   * Check if user is authenticated
+   */
+  public get isAuthenticated(): boolean {
+    return this.isAuthenticatedSubject.value;
+  }
+  
+  /**
+   * Check if user has specific role
+   */
+  public hasRole(role: string): boolean {
+    const user = this.currentUserValue;
+    return user ? user.role === role : false;
+  }
 
   /**
    * Get the authentication token
    */
-  public get token(): string | null {
+  get token(): string | null {
     return this.storageService.getItem<string>(this.AUTH_TOKEN_KEY);
   }
 
   /**
-   * Update user's password using a reset token
-   * @param token Password reset token
-   * @param newPassword New password
+   * Get the refresh token from storage
    */
-  updatePassword(token: string, newPassword: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/reset-password`, { token, newPassword }).pipe(
-      catchError(error => this.handleError(error))
-    );
-  }
-
-  /**
-   * Handle HTTP errors
-   * @param error The error response
-   */
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An unknown error occurred';
-    
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // Server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-    }
-    
-    return throwError(() => new Error(errorMessage));
-  }
-
-  /**
-   * Handle successful authentication
-   * @param response The authentication response
-   */
-  private handleAuthSuccess(response: AuthResponse): void {
-    if (response.token) {
-      this.storageService.setItem(this.AUTH_TOKEN_KEY, response.token);
-    }
-    if (response.refreshToken) {
-      this.storageService.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-    }
-    if (response.user) {
-      this.storageService.setItem(this.USER_KEY, response.user);
-      this.currentUserSubject.next(response.user);
-    }
-  }
-
-  /**
-   * Logout the current user
-   */
-  public logout(): void {
-    // Remove user from local storage
-    this.storageService.removeItem(this.USER_KEY);
-    this.storageService.removeItem(this.AUTH_TOKEN_KEY);
-    this.storageService.removeItem(this.REFRESH_TOKEN_KEY);
-    
-    // Update the current user subject
-    this.currentUserSubject.next(null);
-    
-    // Navigate to login page
-    this.router.navigate(['/auth/login']);
-  }
-
-  /**
-   * Get the refresh token
-   */
-  public getRefreshToken(): string | null {
+  getRefreshToken(): string | null {
     return this.storageService.getItem<string>(this.REFRESH_TOKEN_KEY);
-  }
-
-  /**
-   * Request a password reset email
-   * @param email The user's email address
-   */
-  forgotPassword(email: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/forgot-password`, { email })
-      .pipe(
-        catchError(error => this.handleError(error))
-      );
   }
 
   /**
@@ -142,107 +79,305 @@ export class AuthService {
    */
   refreshToken(): Observable<{ token: string; refreshToken: string }> {
     const refreshToken = this.getRefreshToken();
-    
     if (!refreshToken) {
-      this.logout();
       return throwError(() => new Error('No refresh token available'));
     }
-    
-    return this.http.post<{ token: string; refreshToken: string }>(
-      `${this.apiUrl}/refresh-token`,
-      { refreshToken }
-    ).pipe(
-      tap(tokens => {
-        if (tokens?.token) {
-          this.storageService.setItem(this.AUTH_TOKEN_KEY, tokens.token);
+
+    return this.supabase.refreshSession().pipe(
+      map(({ data, error }) => {
+        if (error) throw error;
+        if (!data?.session) throw new Error('No session data');
+
+        const { access_token, refresh_token } = data.session;
+        
+        // Store the new tokens
+        if (access_token) {
+          this.storageService.setItem(this.AUTH_TOKEN_KEY, access_token);
         }
-        if (tokens?.refreshToken) {
-          this.storageService.setItem(this.REFRESH_TOKEN_KEY, tokens.refreshToken);
+        if (refresh_token) {
+          this.storageService.setItem(this.REFRESH_TOKEN_KEY, refresh_token);
         }
-      }),
-      catchError(error => {
-        this.logout();
-        return throwError(() => error);
+
+        return {
+          token: access_token,
+          refreshToken: refresh_token
+        };
       })
     );
   }
 
   /**
-   * Check if the current user has a specific role
-   * @param role The role to check for
+   * Request password reset email
    */
-  hasRole(role: string): boolean {
-    const user = this.currentUserValue;
-    return user?.role === role || user?.roles?.includes(role) || false;
+  forgotPassword(email: string): Observable<{ error: Error | null }> {
+    return this.supabase.resetPassword(email);
   }
 
   /**
-   * Check if the current user has any of the specified roles
-   * @param roles The roles to check for
+   * Reset password with token
    */
-  hasAnyRole(roles: string[]): boolean {
-    const user = this.currentUserValue;
-    if (!user) return false;
-    return roles.some(role => this.hasRole(role));
+  resetPassword(token: string, newPassword: string): Observable<{ error: Error | null }> {
+    return this.supabase.resetPasswordWithToken(token, newPassword);
   }
 
   /**
-   * Update the current user's information
-   * @param user The updated user object
+   * Update password with token (for password reset flow)
    */
-  updateUser(user: User): void {
-    if (user) {
-      this.storageService.setItem(this.USER_KEY, user);
-      this.currentUserSubject.next(user);
-    }
+  updatePassword(token: string, newPassword: string): Observable<{ error: Error | null }> {
+    return this.supabase.updateUserPassword(token, newPassword);
+  }
+  
+  /**
+   * Clean up on service destruction
+   */
+  ngOnDestroy() {
+    this.currentUserSubject.complete();
+    this.isAuthenticatedSubject.complete();
   }
 
   /**
-   * Check if the user is authenticated
+   * Logout user
    */
-  public get isAuthenticated(): boolean {
-    return !!this.token && !!this.currentUserValue;
+  logout(): Observable<{ error: Error | null }> {
+    return this.supabase.signOut().pipe(
+      tap(({ error }) => {
+        if (error) {
+          console.error('Error during sign out:', error);
+        }
+        
+        // Clear local storage
+        this.storageService.removeItem(this.AUTH_TOKEN_KEY);
+        this.storageService.removeItem(this.REFRESH_TOKEN_KEY);
+        this.storageService.removeItem(this.USER_KEY);
+        
+        // Update current user subject
+        this.currentUserSubject.next(null);
+        this.isAuthenticatedSubject.next(false);
+        
+        // Navigate to login page
+        this.router.navigate(['/auth/login']);
+      })
+    );
   }
 
   /**
    * Register a new user
-   * @param userData User registration data
    */
-  register(userData: any): Observable<User> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
-      tap((response) => this.handleAuthSuccess(response)),
-      map((response) => {
-        if (!response.user) {
-          throw new Error('No user data in response');
+  register(userData: any): Observable<AuthResponse> {
+    console.log('Registering user with data:', {
+      email: userData.email,
+      hasPassword: !!userData.password,
+      hasConfirmPassword: !!userData.confirmPassword,
+      passwordsMatch: userData.password === userData.confirmPassword
+    });
+    
+    // Double check passwords match (should be handled by form validation)
+    if (userData.password !== userData.confirmPassword) {
+      console.error('Password mismatch:', {
+        password: userData.password,
+        confirmPassword: userData.confirmPassword
+      });
+      return throwError(() => new Error('AUTH.REGISTER.ERRORS.PASSWORD_MISMATCH'));
+    }
+    
+    const { email, password, confirmPassword, ...profileData } = userData;
+    
+    // Clear any existing session data that might cause conflicts
+    this.storageService.removeItem(this.AUTH_TOKEN_KEY);
+    this.storageService.removeItem(this.REFRESH_TOKEN_KEY);
+    
+    // Create a promise that resolves after a delay
+    const delay = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+    
+    const attemptRegistration = async (): Promise<AuthResponse> => {
+      try {
+        // Add a small delay to help with the lock manager issue
+        await delay(100);
+        
+        // Call signUp and handle the Observable response
+        const signUpResult = await this.supabase.signUp(email, password, profileData).toPromise();
+        
+        if (!signUpResult) {
+          throw new Error('AUTH.REGISTER.ERRORS.REGISTRATION_FAILED');
         }
-        return response.user;
+        
+        const { user, error } = signUpResult;
+        
+        if (error) {
+          if (error.message.includes('User already registered')) {
+            throw new Error('AUTH.REGISTER.ERRORS.EMAIL_TAKEN');
+          }
+          throw error;
+        }
+        
+        if (!user) {
+          throw new Error('AUTH.REGISTER.ERRORS.REGISTRATION_FAILED');
+        }
+        
+        // Don't try to log in automatically - user needs to confirm email first
+        const response: AuthResponse = {
+          user: {
+            id: user.id,
+            email: user.email || email, // Ensure we have the email
+            firstName: profileData.firstName || '',
+            lastName: profileData.lastName || '',
+            role: 'user',
+            isVerified: false,
+            militaryId: profileData.militaryId || '',
+            rank: profileData.rank || '',
+            unit: profileData.unit || ''
+          },
+          requiresEmailConfirmation: true
+        };
+        console.log('Registration successful, response:', response);
+        return response;
+      } catch (error: unknown) {
+        console.error('Registration attempt failed:', error);
+        
+        // Type guard to check if error is an instance of Error
+        const isError = (e: unknown): e is Error => e instanceof Error;
+        
+        // If it's a lock manager error, try one more time
+        if (isError(error) && 
+            (error.message.includes('NavigatorLockManager') || 
+             error.message.includes('lock') || 
+             error.message.includes('timeout'))) {
+          console.log('Retrying registration after lock manager error...');
+          await delay(500); // Longer delay for retry
+          return attemptRegistration();
+        }
+        
+        throw error;
+      }
+    };
+    
+    // Convert the promise to an observable
+    return new Observable<AuthResponse>((subscriber) => {
+      attemptRegistration()
+        .then((result: AuthResponse) => {
+          subscriber.next(result);
+        })
+        .catch((err) => {
+          subscriber.error(err);
+        });
+    });
+  }
+
+  /**
+   * Login user
+   */
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.supabase.signIn(email, password).pipe(
+      map(({ user, session, error }) => {
+        if (error) {
+          console.error('Login error:', error);
+          throw error instanceof Error ? error : new Error('Login failed');
+        }
+        
+        if (!user) {
+          console.error('No user data returned from sign in');
+          throw new Error('Login failed: No user data');
+        }
+        
+        try {
+          // Store tokens if available
+          if (session?.access_token) {
+            this.storageService.setItem(this.AUTH_TOKEN_KEY, session.access_token);
+          }
+          if (session?.refresh_token) {
+            this.storageService.setItem(this.REFRESH_TOKEN_KEY, session.refresh_token);
+          }
+          
+          // Log user data for debugging
+          console.log('User data from login:', user);
+          
+          // Create user object with all required properties
+          const userMetadata = user.user_metadata || {};
+          const firstName = userMetadata.first_name || user['firstName'] || '';
+          const lastName = userMetadata.last_name || user['lastName'] || '';
+          const role = user['role'] || userMetadata.role || 'user';
+          const militaryId = user['militaryId'] || userMetadata.military_id || userMetadata['militaryId'] || '';
+          const rank = user['rank'] || userMetadata.rank || '';
+          const unit = user['unit'] || userMetadata.unit || '';
+          const isVerified = user.email_confirmed_at !== null || user['isVerified'] === true;
+          
+          const userData: User = {
+            id: user.id,
+            email: user.email || email,
+            firstName,
+            lastName,
+            role,
+            militaryId,
+            rank,
+            unit,
+            isActive: true,
+            user_metadata: userMetadata,
+            email_confirmed_at: user.email_confirmed_at,
+            isVerified
+          };
+          
+          // Store user data
+          this.storageService.setItem(this.USER_KEY, userData);
+          
+          const response: AuthResponse = {
+            user: userData,
+            token: session?.access_token,
+            refreshToken: session?.refresh_token
+          };
+          
+          this.handleAuthentication(response);
+          return response;
+        } catch (err) {
+          console.error('Error processing login response:', err);
+          throw new Error('Error processing login');
+        }
       }),
-      catchError(error => this.handleError(error))
+      catchError((error) => {
+        console.error('AuthService login error:', error);
+        return this.handleError(error);
+      })
     );
   }
 
   /**
-   * Login with email and password
-   * @param email User's email
-   * @param password User's password
-   * @param rememberMe Whether to remember the user
+   * Handle successful authentication
    */
-  login(email: string, password: string, rememberMe: boolean = false): Observable<User> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
-      tap((response) => {
-        this.handleAuthSuccess(response);
-        if (rememberMe) {
-          // Store remember me token in local storage
-          this.storageService.setItem('remember_me', 'true');
-        }
-      }),
-      map((response) => {
-        if (!response.user) {
-          throw new Error('No user data in response');
-        }
-        return response.user;
-      }),
-      catchError(error => this.handleError(error))
-    );
+  private handleAuthentication(response: AuthResponse): void {
+    if (response.user) {
+      // Update current user
+      this.currentUserSubject.next(response.user);
+      this.isAuthenticatedSubject.next(true);
+      
+      // Store user data in storage
+      this.storageService.setItem(this.USER_KEY, response.user);
+      
+      // Store tokens if available
+      if (response.token) {
+        this.storageService.setItem(this.AUTH_TOKEN_KEY, response.token);
+      }
+      if (response.refreshToken) {
+        this.storageService.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+      }
+    }
+  }
+
+  /**
+   * Handle errors
+   */
+  private handleError(error: any) {
+    console.error('Auth error:', error);
+    let errorMessage = 'An error occurred';
+    
+    if (error.error_description) {
+      errorMessage = error.error_description;
+    } else if (error.message) {
+      errorMessage = error.message;
+    } else if (error.status && error.status === 400) {
+      errorMessage = 'Invalid email or password';
+    } else if (error.status && error.status >= 500) {
+      errorMessage = 'Server error. Please try again later.';
+    }
+    
+    return throwError(() => new Error(errorMessage));
   }
 }

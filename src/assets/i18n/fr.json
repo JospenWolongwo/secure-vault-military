@@ -21,15 +21,17 @@
     "LOGIN": {
       "TITLE": "Connexion",
       "SUBTITLE": "Connectez-vous à votre compte",
-      "EMAIL": "Adresse email",
-      "EMAIL_PLACEHOLDER": "Entrez votre adresse email",
-      "PASSWORD": "Mot de passe",
+      "EMAIL": "Adresse e-mail",
+      "EMAIL_LABEL": "Adresse e-mail",
+      "EMAIL_PLACEHOLDER": "Entrez votre adresse e-mail",
+      "PASSWORD_LABEL": "Mot de passe",
       "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
       "REMEMBER_ME": "Se souvenir de moi",
       "FORGOT_PASSWORD": "Mot de passe oublié ?",
-      "SUBMIT": "Se connecter",
+      "SIGN_IN_BUTTON": "Se connecter",
       "NO_ACCOUNT": "Vous n'avez pas de compte ?",
-      "CREATE_ACCOUNT": "Créer un compte",
+      "SIGN_UP_LINK": "S'inscrire",
+      "SUCCESS": "Connexion réussie !",
       "SHOW_PASSWORD": "Afficher le mot de passe",
       "HIDE_PASSWORD": "Masquer le mot de passe",
       "ERRORS": {
@@ -40,6 +42,7 @@
     "REGISTER": {
       "TITLE": "Créer un compte",
       "SUBTITLE": "Créez votre compte SecureVault",
+      "SUCCESS_MESSAGE": "Inscription réussie ! Nous avons envoyé un email de vérification à {{email}}. Veuillez vérifier votre boîte de réception pour confirmer votre compte.",
       "FIRST_NAME": "Prénom",
       "LAST_NAME": "Nom",
       "RANK": "Grade",
@@ -59,6 +62,18 @@
         "PASSWORD_MISMATCH": "Les mots de passe ne correspondent pas",
         "PASSWORD_STRENGTH": "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre",
         "CONFIRM_PASSWORD_REQUIRED": "Veuillez confirmer votre mot de passe"
+      }
+    },
+    "CONFIRM_EMAIL": {
+      "TITLE": "Vérifiez votre email",
+      "SUBTITLE": "Dernière étape pour activer votre compte",
+      "INSTRUCTIONS": "Nous avons envoyé un email de vérification à votre adresse. Veuillez vérifier votre boîte de réception et cliquer sur le lien de vérification pour activer votre compte.",
+      "CHECK_SPAM": "Si vous ne voyez pas l'email, veuillez vérifier votre dossier de courrier indésirable ou spam.",
+      "RESEND_BUTTON": "Renvoyer l'email de vérification",
+      "SUCCESS": "Email de vérification envoyé avec succès !",
+      "ERRORS": {
+        "EMAIL_REQUIRED": "L'adresse email est obligatoire",
+        "RESEND_FAILED": "Échec de l'envoi de l'email de vérification. Veuillez réessayer."
       }
     },
     "FORGOT_PASSWORD": {
@@ -99,6 +114,7 @@
     }
   },
   "COMMON": {
+    "BACK_TO_LOGIN": "Retour à la connexion",
     "LOADING": "Chargement...",
     "ERRORS": {
       "GENERIC": "Une erreur s'est produite. Veuillez réessayer plus tard.",

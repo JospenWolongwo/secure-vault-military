@@ -48,6 +48,23 @@ export class RegisterComponent implements OnInit {
   // Available military ranks
   ranks = Object.values(Rank);
 
+  // Helper methods for password validation
+  hasUppercase(value: string): boolean {
+    return /[A-Z]/.test(value || '');
+  }
+
+  hasLowercase(value: string): boolean {
+    return /[a-z]/.test(value || '');
+  }
+
+  hasNumber(value: string): boolean {
+    return /\d/.test(value || '');
+  }
+
+  hasSpecialChar(value: string): boolean {
+    return /[^\w\s]/.test(value || '');
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -98,7 +115,8 @@ export class RegisterComponent implements OnInit {
       password: ['', [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$')
+        // At least 1 uppercase, 1 lowercase, 1 number, and 1 special character
+        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\w\\s]).{8,}$')
       ]],
       confirmPassword: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
@@ -119,13 +137,29 @@ export class RegisterComponent implements OnInit {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
     
-    if (password && confirmPassword && password.value !== confirmPassword.value) {
-      confirmPassword.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true };
-    } else if (confirmPassword && confirmPassword.hasError('passwordMismatch')) {
-      delete confirmPassword.errors?.['passwordMismatch'];
-      confirmPassword.updateValueAndValidity();
+    // If either control is null, return null (no validation possible)
+    if (!password || !confirmPassword) {
+      return null;
     }
+    
+    // If password field is empty, don't validate yet (required validator will handle this)
+    if (!password.value) {
+      return null;
+    }
+    
+    // Check if passwords match
+    if (password.value !== confirmPassword.value) {
+      // Set error on the form group
+      return { passwordMismatch: true };
+    }
+    
+    // Clear any existing password mismatch errors
+    if (confirmPassword.hasError('passwordMismatch')) {
+      const errors = { ...confirmPassword.errors };
+      delete errors['passwordMismatch'];
+      confirmPassword.setErrors(Object.keys(errors).length ? errors : null);
+    }
+    
     return null;
   }
 
@@ -169,64 +203,98 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Reset error message
+    this.error = '';
+
     // Mark all fields as touched to trigger validation messages
-    this.registerForm.markAllAsTouched();
-    
-    // Vérifier si le formulaire est valide et que l'ID militaire a été vérifié
-    if (this.registerForm.invalid || this.registerForm.get('militaryId')?.pending) {
-      if (this.registerForm.get('militaryId')?.pending) {
-        this.notificationService.showWarning(this.translate.instant('AUTH.MILITARY_ID.ERRORS.PENDING'));
-      }
-      // Scroll to the first invalid field
+    Object.values(this.registerForm.controls).forEach(control => {
+      control.markAsTouched();
+    });
+
+    // Manually trigger validation
+    this.registerForm.updateValueAndValidity();
+
+    // Check if form is valid
+    if (this.registerForm.invalid) {
+      // Find the first invalid control and focus it
       const firstInvalidControl = document.querySelector('.ng-invalid');
       if (firstInvalidControl) {
         firstInvalidControl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
       return;
     }
-
+    
+    // Show loading state
     this.loading = true;
     this.error = '';
+
+    // Get form values and ensure passwords match
+    const formValue = this.registerForm.getRawValue();
     
-    // Remove confirmPassword before sending to server
-    const { confirmPassword, ...userData } = this.registerForm.value;
+    // Create a clean user data object
+    const userData = {
+      email: formValue.email,
+      password: formValue.password,
+      confirmPassword: formValue.confirmPassword,
+      firstName: formValue.firstName,
+      lastName: formValue.lastName,
+      militaryId: formValue.militaryId,
+      // Add other fields as needed
+    };
+    
+    console.log('Submitting registration with data:', {
+      ...userData,
+      password: '***', // Don't log actual passwords
+      confirmPassword: '***'
+    });
 
     this.authService.register(userData).subscribe({
-      next: () => {
-        this.notificationService.showSuccess('Registration successful! Please check your email to verify your account.');
-        this.router.navigate(['/auth/registration-success'], { 
-          state: { email: userData.email } 
-        });
+      next: (response) => {
+        // Show success message with the user's email
+        this.notificationService.showSuccess(
+          this.translate.instant('AUTH.REGISTER.SUCCESS_MESSAGE', { email: userData.email })
+        );
+        
+        // Always redirect to confirm-email page with the email as a route parameter
+        this.router.navigate(['/auth/confirm-email', encodeURIComponent(userData.email)]);
       },
       error: (error) => {
-        this.error = error.message || 'Registration failed. Please try again.';
+        console.error('Registration error:', error);
         
-        // Handle specific error cases
-        if (error.error?.errors) {
-          // Handle field-specific errors from the server
-          const fieldErrors = error.error.errors;
-          Object.keys(fieldErrors).forEach(field => {
-            const formControl = this.registerForm.get(field);
-            if (formControl) {
-              // Set the server error message
-              formControl.setErrors({ serverError: fieldErrors[field][0] });
-            }
-          });
-          
-          // Show the first error message
-          const errorMessages = Object.values(fieldErrors).flat() as string[];
-          const firstError = errorMessages.length > 0 ? errorMessages[0] : 'An unknown error occurred';
-          if (firstError) {
-            this.notificationService.showError(String(firstError));
-          }
-        } else {
-          // Generic error message
-          this.notificationService.showError(String(this.error || 'An unknown error occurred'));
-        }
-        
+        // Reset loading state
         this.loading = false;
         
-        // Scroll to the first error
+        // Default error message
+        let errorMessage = 'AUTH.REGISTER.ERRORS.REGISTRATION_FAILED';
+        
+        // Handle specific error messages
+        if (error.message) {
+          if (error.message.includes('Password mismatch') || 
+              error.message.includes('Passwords do not match')) {
+            errorMessage = 'AUTH.REGISTER.ERRORS.PASSWORD_MISMATCH';
+            
+            // Scroll to confirm password field
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            if (confirmPasswordField) {
+              confirmPasswordField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              confirmPasswordField.focus();
+            }
+          } else if (error.message.includes('User already registered') || 
+                    error.message.includes('already in use')) {
+            errorMessage = 'AUTH.REGISTER.ERRORS.EMAIL_TAKEN';
+          } else if (error.message.includes('password')) {
+            errorMessage = 'AUTH.REGISTER.ERRORS.INVALID_PASSWORD';
+          } else if (error.message.includes('email')) {
+            errorMessage = 'AUTH.REGISTER.ERRORS.INVALID_EMAIL';
+          } else if (error.message.includes('network')) {
+            errorMessage = 'AUTH.REGISTER.ERRORS.NETWORK_ERROR';
+          }
+        }
+        
+        // Show the error message
+        this.notificationService.showError(this.translate.instant(errorMessage));
+        
+        // Scroll to the first error field if available
         const firstInvalidControl = document.querySelector('.ng-invalid');
         if (firstInvalidControl) {
           firstInvalidControl.scrollIntoView({ behavior: 'smooth', block: 'center' });

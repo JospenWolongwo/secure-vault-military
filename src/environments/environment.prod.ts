@@ -1,44 +1,58 @@
 // API Configuration
 export const API_CONFIG = {
-  baseUrl: 'https://api.securevault-military.cm/api',
+  baseUrl: "https://api.securevault-military.cm/api",
   auth: {
-    login: '/auth/login',
-    register: '/auth/register',
-    refreshToken: '/auth/refresh-token',
-    forgotPassword: '/auth/forgot-password',
-    resetPassword: '/auth/reset-password',
-    verifyEmail: '/auth/verify-email',
-    me: '/auth/me'
+    login: "/auth/login",
+    register: "/auth/register",
+    refreshToken: "/auth/refresh-token",
+    forgotPassword: "/auth/forgot-password",
+    resetPassword: "/auth/reset-password",
+    verifyEmail: "/auth/verify-email",
+    me: "/auth/me",
   },
   users: {
-    base: '/users',
-    profile: '/users/profile',
-    changePassword: '/users/change-password'
+    base: "/users",
+    profile: "/users/profile",
+    changePassword: "/users/change-password",
   },
   documents: {
-    base: '/documents',
-    upload: '/documents/upload',
+    base: "/documents",
+    upload: "/documents/upload",
     download: (id: string) => `/documents/${id}/download`,
-    share: (id: string) => `/documents/${id}/share`
-  }
+    share: (id: string) => `/documents/${id}/share`,
+  },
+};
+
+// Supabase Configuration
+export const SUPABASE_CONFIG = {
+  url: "https://bmkvlqeityoqoijuwify.supabase.co",
+  anonKey:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJta3ZscWVpdHlvcW9panV3aWZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc0NzcwNTIsImV4cCI6MjA2MzA1MzA1Mn0.ZRJZjcWgseNQoAL5TvhG8-06aC6xFElBduahdWiXiLU",
+  storageBucket: "documents",
+  storageUrl: "https://bmkvlqeityoqoijuwify.supabase.co/storage/v1/s3",
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+  },
 };
 
 export const environment = {
   production: true,
-  apiUrl: 'https://api.securevault-military.cm/api',
-  appName: 'SecureVault Military',
-  appVersion: '1.0.0',
+  apiUrl: "https://api.securevault-military.cm/api",
+  appName: "SecureVault Military",
+  appVersion: "1.0.0",
   enableDebug: false,
-  
+
   // Authentication
   auth: {
-    tokenKey: 'auth_token',
-    refreshTokenKey: 'refresh_token',
-    userKey: 'current_user',
+    tokenKey: "auth_token",
+    refreshTokenKey: "refresh_token",
+    userKey: "current_user",
     tokenExpiration: 3600, // 1 hour in seconds
     refreshTokenExpiration: 2592000, // 30 days in seconds
   },
-  
+
   // Features
   features: {
     registration: true, // Set to false to disable registration in production
@@ -47,43 +61,43 @@ export const environment = {
     announcements: true,
     auditLog: true,
     userManagement: true,
-    roleBasedAccess: true
+    roleBasedAccess: true,
   },
-  
+
   // UI Settings
   ui: {
-    defaultLanguage: 'en',
-    supportedLanguages: ['en', 'fr'],
-    theme: 'light',
+    defaultLanguage: "en",
+    supportedLanguages: ["en", "fr"],
+    theme: "light",
     enableDarkMode: true,
     enableNotifications: true,
-    enableAnalytics: true
+    enableAnalytics: true,
   },
-  
+
   // External Services
   services: {
     supabase: {
-      url: 'https://your-supabase-url.supabase.co', // Add your production Supabase URL
-      key: 'your-supabase-anon-key' // Add your production Supabase anon key
+      url: "https://your-supabase-url.supabase.co", // Add your production Supabase URL
+      key: "your-supabase-anon-key", // Add your production Supabase anon key
     },
     sentry: {
-      dsn: '' // Add your production Sentry DSN if needed
-    }
+      dsn: "", // Add your production Sentry DSN if needed
+    },
   },
-  
+
   // Security
   security: {
-    encryptionKey: 'prod-encryption-key-32-char-long-12345', // In a real app, use a secure key management system
+    encryptionKey: "prod-encryption-key-32-char-long-12345", // In a real app, use a secure key management system
     password: {
       minLength: 12,
       requireUppercase: true,
       requireLowercase: true,
       requireNumbers: true,
-      requireSpecialChars: true
+      requireSpecialChars: true,
     },
     session: {
       idleTimeout: 1800, // 30 minutes in seconds
       warningBeforeTimeout: 300, // 5 minutes in seconds
-    }
-  }
+    },
+  },
 };

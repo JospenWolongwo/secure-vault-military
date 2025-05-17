@@ -1,9 +1,15 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef, MatSnackBarModule } from '@angular/material/snack-bar';
-import { NotificationConfig, NotificationType } from '../../../core/services/notification.service';
+import { NotificationType } from '../../../core/services/notification.service';
+
+interface NotificationData {
+  message: string;
+  type: NotificationType;
+  action?: string;
+}
 
 @Component({
   standalone: true,
@@ -15,9 +21,9 @@ import { NotificationConfig, NotificationType } from '../../../core/services/not
     MatSnackBarModule
   ],
   template: `
-    <div class="notification-container" [ngClass]="type">
+    <div class="notification-container" [ngClass]="data.type">
       <div class="notification-icon">
-        <mat-icon *ngIf="icon" [svgIcon]="icon"></mat-icon>
+        <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
       </div>
       <div class="notification-content">
         <div class="notification-message">{{ data.message }}</div>
@@ -124,27 +130,24 @@ import { NotificationConfig, NotificationType } from '../../../core/services/not
     `,
   ],
 })
-export class NotificationComponent implements OnDestroy {
-  type: NotificationType = 'info';
-  icon: string | null = null;
-
+export class NotificationComponent {
   constructor(
-    @Inject(MAT_SNACK_BAR_DATA) public data: any,
+    @Inject(MAT_SNACK_BAR_DATA) public data: NotificationData,
     private snackBarRef: MatSnackBarRef<NotificationComponent>
-  ) {
-    this.type = data.type || 'info';
-    this.setIcon();
-  }
-
-  ngOnDestroy(): void {
-    // Cleanup if needed
-  }
+  ) {}
 
   /**
-   * Dismisses the notification
+   * Returns the appropriate Material icon name based on notification type
    */
-  dismiss(): void {
-    this.snackBarRef.dismiss();
+  get icon(): string {
+    const iconMap: Record<NotificationType, string> = {
+      'success': 'check_circle',
+      'error': 'error_outline',
+      'warning': 'warning',
+      'info': 'info_outline'
+    };
+    
+    return iconMap[this.data.type || 'info'];
   }
 
   /**
@@ -155,24 +158,9 @@ export class NotificationComponent implements OnDestroy {
   }
 
   /**
-   * Sets the appropriate icon based on notification type
-   * @private
+   * Dismisses the notification
    */
-  private setIcon(): void {
-    switch (this.type) {
-      case 'success':
-        this.icon = 'check_circle';
-        break;
-      case 'error':
-        this.icon = 'error';
-        break;
-      case 'warning':
-        this.icon = 'warning';
-        break;
-      case 'info':
-      default:
-        this.icon = 'info';
-        break;
-    }
+  dismiss(): void {
+    this.snackBarRef.dismiss();
   }
 }

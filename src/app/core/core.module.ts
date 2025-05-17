@@ -7,6 +7,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
 import { AuthService } from './services/auth.service';
+import { SupabaseService } from './services/supabase.service';
 import { StorageService } from './services/storage.service';
 import { throwIfAlreadyLoaded } from './utils/module-import-guard';
 
@@ -19,6 +20,7 @@ import { throwIfAlreadyLoaded } from './utils/module-import-guard';
   ],
   providers: [
     AuthService,
+    SupabaseService,
     StorageService,
     {
       provide: HTTP_INTERCEPTORS,
