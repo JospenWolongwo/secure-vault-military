@@ -9,10 +9,10 @@
   - [x] Test language switching functionality
 
 ### 2. Authentication Flow
-- [ ] Fix 'Create Account' link not redirecting to signup
-  - [ ] Check router configuration
-  - [ ] Verify signup component is properly imported
-  - [ ] Test navigation from login to signup
+- [x] Fix 'Create Account' link not redirecting to signup
+  - [x] Check router configuration
+  - [x] Verify signup component is properly imported
+  - [x] Test navigation from login to signup
 
 ### 3. Git Repository Cleanup
 - [x] Review and update .gitignore
