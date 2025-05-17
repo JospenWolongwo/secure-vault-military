@@ -1,4 +1,30 @@
-# SecureVault Military (SVM) - Liste des Tâches de Développement
+# SecureVault Military (SVM) - Development Task List
+
+## Current Issues (High Priority)
+
+### 1. Language Configuration
+- [x] Set French as default language
+  - [x] Check i18n configuration
+  - [x] Verify language service initialization
+  - [x] Test language switching functionality
+
+### 2. Authentication Flow
+- [ ] Fix 'Create Account' link not redirecting to signup
+  - [ ] Check router configuration
+  - [ ] Verify signup component is properly imported
+  - [ ] Test navigation from login to signup
+
+### 3. Git Repository Cleanup
+- [x] Review and update .gitignore
+  - [x] Add node_modules/
+  - [x] Add .angular/cache
+  - [x] Add environment files with sensitive data
+  - [x] Add IDE specific files
+  - [x] Clean up existing tracked files that should be ignored
+
+---
+
+## File Structure
 
 ## Structure de Fichiers
 
