@@ -4,16 +4,34 @@
     "DESCRIPTION": "Secure document management solution for armed forces"
   },
   "AUTH": {
+    "MILITARY_ID": {
+      "LABEL": "Military ID",
+      "HINT": "Your official military identification number",
+      "VERIFYING": "Verifying...",
+      "ERRORS": {
+        "REQUIRED": "Military ID is required",
+        "MIN_LENGTH": "Military ID must be at least 6 characters",
+        "MAX_LENGTH": "Military ID cannot exceed 20 characters",
+        "PATTERN": "Only letters, numbers and hyphens are allowed",
+        "INVALID": "Invalid military ID. Please check and try again.",
+        "VERIFICATION_ERROR": "Unable to verify military ID. Please try again later.",
+        "PENDING": "Please wait while we verify your military ID"
+      }
+    },
     "LOGIN": {
       "TITLE": "Login",
       "SUBTITLE": "Sign in to your account",
       "EMAIL": "Email address",
+      "EMAIL_PLACEHOLDER": "Enter your email address",
       "PASSWORD": "Password",
+      "PASSWORD_PLACEHOLDER": "Enter your password",
       "REMEMBER_ME": "Remember me",
       "FORGOT_PASSWORD": "Forgot password?",
       "SUBMIT": "Sign in",
       "NO_ACCOUNT": "Don't have an account?",
       "CREATE_ACCOUNT": "Create account",
+      "SHOW_PASSWORD": "Show password",
+      "HIDE_PASSWORD": "Hide password",
       "ERRORS": {
         "REQUIRED": "This field is required",
         "INVALID_EMAIL": "Please enter a valid email address"
@@ -24,15 +42,23 @@
       "SUBTITLE": "Create your SecureVault account",
       "FIRST_NAME": "First name",
       "LAST_NAME": "Last name",
+      "RANK": "Rank",
+      "UNIT": "Unit",
       "EMAIL": "Email address",
       "PASSWORD": "Password",
+      "PASSWORD_PLACEHOLDER": "Create a secure password",
       "CONFIRM_PASSWORD": "Confirm password",
+      "CONFIRM_PASSWORD_PLACEHOLDER": "Confirm your password",
       "SUBMIT": "Sign up",
       "HAVE_ACCOUNT": "Already have an account?",
       "LOGIN": "Sign in",
+      "SHOW_PASSWORD": "Show password",
+      "HIDE_PASSWORD": "Hide password",
       "ERRORS": {
+        "REQUIRED": "This field is required",
         "PASSWORD_MISMATCH": "Passwords do not match",
-        "PASSWORD_STRENGTH": "Password must be at least 8 characters long and include uppercase, lowercase and numbers"
+        "PASSWORD_STRENGTH": "Password must be at least 8 characters long and include uppercase, lowercase and numbers",
+        "CONFIRM_PASSWORD_REQUIRED": "Please confirm your password"
       }
     },
     "FORGOT_PASSWORD": {
@@ -40,12 +66,15 @@
       "SUBTITLE": "Reset your password",
       "INSTRUCTIONS": "Enter the email address associated with your account and we'll send you a link to reset your password.",
       "EMAIL": "Email address",
+      "EMAIL_PLACEHOLDER": "Enter your email address",
       "SUBMIT": "Send reset link",
       "BACK_TO_LOGIN": "Back to login",
       "SUCCESS": "A password reset link has been sent to your email address.",
       "ERRORS": {
         "EMAIL_REQUIRED": "Email is required",
-        "INVALID_EMAIL": "Please enter a valid email address"
+        "INVALID_EMAIL": "Please enter a valid email address",
+        "EMAIL_NOT_FOUND": "No account found with this email address.",
+        "GENERIC": "Failed to send reset link. Please try again."
       }
     },
     "RESET_PASSWORD": {
@@ -63,7 +92,9 @@
         "PASSWORD_REQUIRED": "Password is required",
         "PASSWORD_PATTERN": "Password must be at least 8 characters long and include uppercase, lowercase and numbers",
         "CONFIRM_PASSWORD_REQUIRED": "Please confirm your password",
-        "PASSWORDS_MISMATCH": "Passwords do not match"
+        "PASSWORDS_MISMATCH": "Passwords do not match",
+        "INVALID_TOKEN": "Invalid or expired reset token. Please request a new password reset link.",
+        "GENERIC": "Failed to reset password. Please try again."
       }
     }
   },

@@ -4,16 +4,34 @@
     "DESCRIPTION": "Solution sécurisée de gestion documentaire pour les forces armées"
   },
   "AUTH": {
+    "MILITARY_ID": {
+      "LABEL": "Identifiant militaire",
+      "HINT": "Votre numéro d'identification militaire officiel",
+      "VERIFYING": "Vérification en cours...",
+      "ERRORS": {
+        "REQUIRED": "L'identifiant militaire est obligatoire",
+        "MIN_LENGTH": "L'identifiant militaire doit contenir au moins 6 caractères",
+        "MAX_LENGTH": "L'identifiant militaire ne peut pas dépasser 20 caractères",
+        "PATTERN": "Seuls les lettres, chiffres et tirets sont autorisés",
+        "INVALID": "Identifiant militaire invalide. Veuillez vérifier et réessayer.",
+        "VERIFICATION_ERROR": "Impossible de vérifier l'identifiant militaire. Veuillez réessayer plus tard.",
+        "PENDING": "Veuillez patienter pendant la vérification de votre identifiant militaire"
+      }
+    },
     "LOGIN": {
       "TITLE": "Connexion",
       "SUBTITLE": "Connectez-vous à votre compte",
       "EMAIL": "Adresse email",
+      "EMAIL_PLACEHOLDER": "Entrez votre adresse email",
       "PASSWORD": "Mot de passe",
+      "PASSWORD_PLACEHOLDER": "Entrez votre mot de passe",
       "REMEMBER_ME": "Se souvenir de moi",
       "FORGOT_PASSWORD": "Mot de passe oublié ?",
       "SUBMIT": "Se connecter",
       "NO_ACCOUNT": "Vous n'avez pas de compte ?",
       "CREATE_ACCOUNT": "Créer un compte",
+      "SHOW_PASSWORD": "Afficher le mot de passe",
+      "HIDE_PASSWORD": "Masquer le mot de passe",
       "ERRORS": {
         "REQUIRED": "Ce champ est obligatoire",
         "INVALID_EMAIL": "Veuillez entrer une adresse email valide"
@@ -24,15 +42,23 @@
       "SUBTITLE": "Créez votre compte SecureVault",
       "FIRST_NAME": "Prénom",
       "LAST_NAME": "Nom",
+      "RANK": "Grade",
+      "UNIT": "Unité",
       "EMAIL": "Adresse email",
       "PASSWORD": "Mot de passe",
+      "PASSWORD_PLACEHOLDER": "Créez un mot de passe sécurisé",
       "CONFIRM_PASSWORD": "Confirmer le mot de passe",
+      "CONFIRM_PASSWORD_PLACEHOLDER": "Confirmez votre mot de passe",
       "SUBMIT": "S'inscrire",
       "HAVE_ACCOUNT": "Vous avez déjà un compte ?",
       "LOGIN": "Se connecter",
+      "SHOW_PASSWORD": "Afficher le mot de passe",
+      "HIDE_PASSWORD": "Masquer le mot de passe",
       "ERRORS": {
+        "REQUIRED": "Ce champ est obligatoire",
         "PASSWORD_MISMATCH": "Les mots de passe ne correspondent pas",
-        "PASSWORD_STRENGTH": "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre"
+        "PASSWORD_STRENGTH": "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre",
+        "CONFIRM_PASSWORD_REQUIRED": "Veuillez confirmer votre mot de passe"
       }
     },
     "FORGOT_PASSWORD": {
@@ -40,12 +66,15 @@
       "SUBTITLE": "Réinitialisez votre mot de passe",
       "INSTRUCTIONS": "Entrez l'adresse email associée à votre compte et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
       "EMAIL": "Adresse email",
+      "EMAIL_PLACEHOLDER": "Entrez votre adresse email",
       "SUBMIT": "Envoyer le lien de réinitialisation",
       "BACK_TO_LOGIN": "Retour à la connexion",
       "SUCCESS": "Un email de réinitialisation a été envoyé à votre adresse email.",
       "ERRORS": {
         "EMAIL_REQUIRED": "L'adresse email est obligatoire",
-        "INVALID_EMAIL": "Veuillez entrer une adresse email valide"
+        "INVALID_EMAIL": "Veuillez entrer une adresse email valide",
+        "EMAIL_NOT_FOUND": "Aucun compte trouvé avec cette adresse email.",
+        "GENERIC": "Échec de l'envoi du lien de réinitialisation. Veuillez réessayer."
       }
     },
     "RESET_PASSWORD": {
@@ -63,7 +92,9 @@
         "PASSWORD_REQUIRED": "Le mot de passe est obligatoire",
         "PASSWORD_PATTERN": "Le mot de passe doit contenir au moins 8 caractères, dont une majuscule, une minuscule et un chiffre",
         "CONFIRM_PASSWORD_REQUIRED": "Veuillez confirmer votre mot de passe",
-        "PASSWORDS_MISMATCH": "Les mots de passe ne correspondent pas"
+        "PASSWORDS_MISMATCH": "Les mots de passe ne correspondent pas",
+        "INVALID_TOKEN": "Jeton de réinitialisation invalide ou expiré. Veuillez demander un nouveau lien de réinitialisation.",
+        "GENERIC": "Échec de la réinitialisation du mot de passe. Veuillez réessayer."
       }
     }
   },
