@@ -1,12 +1,40 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, AsyncValidatorFn, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Rank } from '../../../../core/models/user.model';
+import { MilitaryVerificationService } from '../../../../core/services/military-verification.service';
+import { first, map, switchMap, debounceTime, distinctUntilChanged, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-register',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatSelectModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
@@ -23,9 +51,14 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
+    private militaryVerificationService: MilitaryVerificationService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private translate: TranslateService
   ) {
+    // Ensure translations are loaded
+    this.translate.setDefaultLang('fr');
+    this.translate.use('fr');
     this.registerForm = this.formBuilder.group({
       firstName: ['', [
         Validators.required,
@@ -44,12 +77,18 @@ export class RegisterComponent implements OnInit {
         Validators.email,
         Validators.maxLength(100)
       ]],
-      militaryId: ['', [
-        Validators.required,
-        Validators.pattern('^[a-zA-Z0-9-]+$'),
-        Validators.minLength(6),
-        Validators.maxLength(20)
-      ]],
+      militaryId: ['', 
+        {
+          validators: [
+            Validators.required,
+            Validators.pattern('^[a-zA-Z0-9-]+$'),
+            Validators.minLength(6),
+            Validators.maxLength(20)
+          ],
+          asyncValidators: [this.militaryIdValidator()],
+          updateOn: 'blur'
+        }
+      ],
       rank: ['', Validators.required],
       unit: ['', [
         Validators.required,
@@ -93,11 +132,51 @@ export class RegisterComponent implements OnInit {
   // Getter for easy access to form fields
   get f() { return this.registerForm.controls; }
 
+  /**
+   * Validateur asynchrone pour vérifier l'ID militaire
+   */
+  private militaryIdValidator(): AsyncValidatorFn {
+    return (control: AbstractControl) => {
+      if (!control.value) {
+        return of(null);
+      }
+
+      const militaryId = control.value;
+      const firstName = this.registerForm?.get('firstName')?.value || '';
+      const lastName = this.registerForm?.get('lastName')?.value || '';
+      const rank = this.registerForm?.get('rank')?.value || '';
+
+      return of(control.value).pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap(() => 
+          this.militaryVerificationService.verifyMilitaryId({
+            militaryId,
+            firstName,
+            lastName,
+            rank
+          })
+        ),
+        map(response => {
+          if (!response.isValid) {
+            return { invalidMilitaryId: true };
+          }
+          return null;
+        }),
+        catchError(() => of({ verificationError: true }))
+      );
+    };
+  }
+
   onSubmit(): void {
     // Mark all fields as touched to trigger validation messages
     this.registerForm.markAllAsTouched();
     
-    if (this.registerForm.invalid) {
+    // Vérifier si le formulaire est valide et que l'ID militaire a été vérifié
+    if (this.registerForm.invalid || this.registerForm.get('militaryId')?.pending) {
+      if (this.registerForm.get('militaryId')?.pending) {
+        this.notificationService.showWarning(this.translate.instant('AUTH.MILITARY_ID.ERRORS.PENDING'));
+      }
       // Scroll to the first invalid field
       const firstInvalidControl = document.querySelector('.ng-invalid');
       if (firstInvalidControl) {
@@ -135,13 +214,14 @@ export class RegisterComponent implements OnInit {
           });
           
           // Show the first error message
-          const firstError = Object.values(fieldErrors)[0]?.[0];
+          const errorMessages = Object.values(fieldErrors).flat() as string[];
+          const firstError = errorMessages.length > 0 ? errorMessages[0] : 'An unknown error occurred';
           if (firstError) {
-            this.notificationService.showError(firstError);
+            this.notificationService.showError(String(firstError));
           }
         } else {
           // Generic error message
-          this.notificationService.showError(this.error);
+          this.notificationService.showError(String(this.error || 'An unknown error occurred'));
         }
         
         this.loading = false;

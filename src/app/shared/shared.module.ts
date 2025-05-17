@@ -38,8 +38,10 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 
-// Modules
-import { LanguageSelectorModule } from './components/language-selector/language-selector.module';
+// Components
+import { LanguageSelectorComponent } from './components/language-selector/language-selector.component';
+
+// All components are now standalone
 
 const MATERIAL_MODULES = [
   MatButtonModule,
@@ -60,39 +62,57 @@ const MATERIAL_MODULES = [
   MatTableModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule,
+  MatTooltipModule
 ];
 
-const COMPONENTS = [
+// All components, directives, and pipes are standalone
+const STANDALONE_ITEMS = [
+  // Components
   LoadingSpinnerComponent,
   PageHeaderComponent,
   ConfirmDialogComponent,
-  NotificationComponent
+  NotificationComponent,
+  
+  // Directives
+  ClickOutsideDirective,
+  AutoFocusDirective,
+  
+  // Pipes
+  SafeHtmlPipe,
+  FileSizePipe
 ];
 
-const DIRECTIVES = [ClickOutsideDirective, AutoFocusDirective];
-
-const PIPES = [SafeHtmlPipe, FileSizePipe];
-
 @NgModule({
-  declarations: [...COMPONENTS, ...DIRECTIVES, ...PIPES],
   imports: [
+    // Angular modules
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    
+    // Material modules
     ...MATERIAL_MODULES,
-    LanguageSelectorModule
+    
+    // Standalone components
+    LanguageSelectorComponent,
+    
+    // Standalone components, directives, and pipes
+    ...STANDALONE_ITEMS
   ],
+  // No declarations needed as all components are standalone
+  declarations: [],
   exports: [
+    // Re-export Angular modules
     CommonModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    
+    // Re-export Material modules
     ...MATERIAL_MODULES,
-    ...COMPONENTS,
-    ...DIRECTIVES,
-    ...PIPES,
-  ],
-  providers: [...PIPES],
+    
+    // Re-export standalone items
+    ...STANDALONE_ITEMS
+  ]
 })
 export class SharedModule {}

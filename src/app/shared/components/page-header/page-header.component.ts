@@ -1,11 +1,34 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { LanguageService } from '../../../core/services/language.service';
+import { CommonModule, NgClass } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule, MatTooltip } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIcon } from '@angular/material/icon';
+import { MatDivider } from '@angular/material/divider';
+import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
 
 @Component({
+  standalone: true,
   selector: 'app-page-header',
+  imports: [
+    CommonModule,
+    RouterLink,
+    NgClass,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatTooltip,
+    MatMenuModule,
+    MatDividerModule,
+    MatIcon,
+    MatDivider,
+    LanguageSelectorComponent
+  ],
   template: `
-    <div class="page-header" [ngClass]="{ 'with-breadcrumbs': breadcrumbs?.length > 0 }">
+    <div class="page-header" [ngClass]="{ 'with-breadcrumbs': breadcrumbs && breadcrumbs.length > 0 }">
       <div class="header-content">
         <div class="title-section">
           <h1 class="title">
@@ -25,11 +48,11 @@ import { LanguageService } from '../../../core/services/language.service';
         </div>
       </div>
       
-      <nav class="breadcrumb" *ngIf="breadcrumbs?.length > 0">
+      <nav class="breadcrumb" *ngIf="breadcrumbs && breadcrumbs.length > 0">
         <a *ngFor="let crumb of breadcrumbs; let last = last" 
            [routerLink]="crumb.url" 
            [class.active]="last"
-           [matTooltip]="crumb.tooltip"
+           [matTooltip]="crumb.tooltip || ''"
            matTooltipPosition="below">
           {{ crumb.label }}
         </a>
@@ -134,17 +157,17 @@ import { LanguageService } from '../../../core/services/language.service';
   ],
 })
 export class PageHeaderComponent implements OnInit {
-  @Input() title = '';
-  @Input() subtitle = '';
-  @Input() icon = '';
-  @Input() divider = true;
+  @Input() title: string = '';
+  @Input() subtitle: string = '';
+  @Input() icon: string = '';
+  @Input() showActionButtons: boolean = false;
   @Input() breadcrumbs: Breadcrumb[] = [];
-  @Input() showActionButtons = false;
+  @Input() divider: boolean = false;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-    // Auto-generate breadcrumbs if not provided
+    // If no breadcrumbs are provided, generate from the current route
     if (this.breadcrumbs.length === 0) {
       this.generateBreadcrumbs();
     }
@@ -152,31 +175,21 @@ export class PageHeaderComponent implements OnInit {
 
   private generateBreadcrumbs(): void {
     const url = this.router.url;
-    const segments = url.split('/').filter(segment => segment);
-    const breadcrumbs: Breadcrumb[] = [];
+    const segments = url.split('/').filter(segment => segment !== '');
     
-    let urlSegment = '';
-    
-    for (let i = 0; i < segments.length; i++) {
-      const segment = segments[i];
-      urlSegment += `/${segment}`;
-      
-      // Skip numeric segments (like IDs)
-      if (/^\d+$/.test(segment)) {
-        continue;
-      }
-      
-      const label = this.formatLabel(segment);
-      breadcrumbs.push({
-        label,
-        url: urlSegment,
-        tooltip: `Go to ${label}`
-      });
-    }
+    let urlSoFar = '';
+    const newBreadcrumbs = segments.map(segment => {
+      urlSoFar += `/${segment}`;
+      return {
+        label: this.formatLabel(segment),
+        url: urlSoFar,
+        tooltip: `Navigate to ${this.formatLabel(segment)}`
+      };
+    });
     
     // Only update if we found breadcrumbs
-    if (breadcrumbs.length > 0) {
-      this.breadcrumbs = breadcrumbs;
+    if (newBreadcrumbs.length > 0) {
+      this.breadcrumbs = newBreadcrumbs;
     }
   }
   

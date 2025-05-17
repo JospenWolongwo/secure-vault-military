@@ -1,7 +1,14 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
+  standalone: true,
   selector: 'app-loading-spinner',
+  imports: [
+    CommonModule,
+    MatProgressSpinnerModule
+  ],
   template: `
     <div class="loading-spinner" [ngClass]="{ 'full-screen': fullScreen, 'overlay': overlay }">
       <mat-spinner [diameter]="diameter" [color]="color"></mat-spinner>

@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { LanguageService } from '../../../core/services/language.service';
+
+// Angular Material Modules
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 interface LanguageOption {
   code: string;
@@ -9,6 +15,13 @@ interface LanguageOption {
 
 @Component({
   selector: 'app-language-selector',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule
+  ],
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss']
 })

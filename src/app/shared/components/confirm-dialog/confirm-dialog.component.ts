@@ -1,74 +1,35 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-export interface ConfirmDialogData {
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
-  confirmColor?: 'primary' | 'accent' | 'warn';
-  showCancel?: boolean;
-  width?: string;
-}
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ConfirmDialogData } from './confirm-dialog.interface';
 
 @Component({
+  standalone: true,
   selector: 'app-confirm-dialog',
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatDialogModule
+  ],
   template: `
     <h2 mat-dialog-title>{{ data.title }}</h2>
-    
     <mat-dialog-content>
       <p>{{ data.message }}</p>
     </mat-dialog-content>
-    
     <mat-dialog-actions align="end">
-      <button 
-        mat-button 
-        [mat-dialog-close]="false"
-        *ngIf="data.showCancel !== false"
-        data-testid="cancel-button"
-      >
+      <button mat-button *ngIf="data.showCancel" (click)="onNoClick()">
         {{ data.cancelText || 'Cancel' }}
       </button>
-      
       <button 
-        mat-flat-button 
-        [color]="data.confirmColor || 'primary'"
+        mat-button 
+        [color]="data.confirmColor || 'primary'" 
         [mat-dialog-close]="true"
-        cdkFocusInitial
-        data-testid="confirm-button"
-      >
+        cdkFocusInitial>
         {{ data.confirmText || 'Confirm' }}
       </button>
     </mat-dialog-actions>
-  `,
-  styles: [
-    `
-      h2 {
-        margin: 0 0 1rem 0;
-        padding: 0;
-        color: rgba(0, 0, 0, 0.87);
-      }
-      
-      mat-dialog-content {
-        margin: 0 0 1.5rem 0;
-        padding: 0;
-        color: rgba(0, 0, 0, 0.6);
-        line-height: 1.5;
-      }
-      
-      mat-dialog-actions {
-        margin: 0 -16px -16px -16px;
-        padding: 0.75rem 1.5rem;
-        justify-content: flex-end;
-        border-top: 1px solid rgba(0, 0, 0, 0.12);
-      }
-      
-      button {
-        margin-left: 0.5rem;
-        min-width: 80px;
-      }
-    `,
-  ],
+  `
 })
 export class ConfirmDialogComponent {
   constructor(
@@ -87,17 +48,7 @@ export class ConfirmDialogComponent {
     };
   }
 
-  /**
-   * Open a confirmation dialog
-   * @param dialog The MatDialog service
-   * @param data Configuration for the dialog
-   * @returns Observable that emits when the dialog is closed
-   */
-  static open(dialog: any, data: ConfirmDialogData) {
-    return dialog.open(ConfirmDialogComponent, {
-      width: data.width || '400px',
-      disableClose: true,
-      data,
-    });
+  onNoClick(): void {
+    this.dialogRef.close(false);
   }
 }

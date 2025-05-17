@@ -1,22 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { environment } from '../../../../environments/environment';
-import { User } from '../models/user.model';
+import { environment } from '@environments/environment';
 import { StorageService } from './storage.service';
 
-interface AuthResponse {
-  user: User;
-  token: string;
+export interface AuthResponse {
+  token?: string;
   refreshToken?: string;
+  user?: User;
 }
 
-interface ErrorResponse {
-  message: string;
-  errors?: { [key: string]: string[] };
+export interface User {
+  id: string;
+  email: string;
+  role: string;
+  roles?: string[];
 }
 
 @Injectable({
@@ -57,10 +58,143 @@ export class AuthService {
   }
 
   /**
+   * Update user's password using a reset token
+   * @param token Password reset token
+   * @param newPassword New password
+   */
+  updatePassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, { token, newPassword }).pipe(
+      catchError(error => this.handleError(error))
+    );
+  }
+
+  /**
+   * Handle HTTP errors
+   * @param error The error response
+   */
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'An unknown error occurred';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    
+    return throwError(() => new Error(errorMessage));
+  }
+
+  /**
+   * Handle successful authentication
+   * @param response The authentication response
+   */
+  private handleAuthSuccess(response: AuthResponse): void {
+    if (response.token) {
+      this.storageService.setItem(this.AUTH_TOKEN_KEY, response.token);
+    }
+    if (response.refreshToken) {
+      this.storageService.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
+    }
+    if (response.user) {
+      this.storageService.setItem(this.USER_KEY, response.user);
+      this.currentUserSubject.next(response.user);
+    }
+  }
+
+  /**
+   * Logout the current user
+   */
+  public logout(): void {
+    // Remove user from local storage
+    this.storageService.removeItem(this.USER_KEY);
+    this.storageService.removeItem(this.AUTH_TOKEN_KEY);
+    this.storageService.removeItem(this.REFRESH_TOKEN_KEY);
+    
+    // Update the current user subject
+    this.currentUserSubject.next(null);
+    
+    // Navigate to login page
+    this.router.navigate(['/auth/login']);
+  }
+
+  /**
    * Get the refresh token
    */
-  private get refreshToken(): string | null {
+  public getRefreshToken(): string | null {
     return this.storageService.getItem<string>(this.REFRESH_TOKEN_KEY);
+  }
+
+  /**
+   * Request a password reset email
+   * @param email The user's email address
+   */
+  forgotPassword(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/forgot-password`, { email })
+      .pipe(
+        catchError(error => this.handleError(error))
+      );
+  }
+
+  /**
+   * Refresh the authentication token
+   */
+  refreshToken(): Observable<{ token: string; refreshToken: string }> {
+    const refreshToken = this.getRefreshToken();
+    
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+    
+    return this.http.post<{ token: string; refreshToken: string }>(
+      `${this.apiUrl}/refresh-token`,
+      { refreshToken }
+    ).pipe(
+      tap(tokens => {
+        if (tokens?.token) {
+          this.storageService.setItem(this.AUTH_TOKEN_KEY, tokens.token);
+        }
+        if (tokens?.refreshToken) {
+          this.storageService.setItem(this.REFRESH_TOKEN_KEY, tokens.refreshToken);
+        }
+      }),
+      catchError(error => {
+        this.logout();
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Check if the current user has a specific role
+   * @param role The role to check for
+   */
+  hasRole(role: string): boolean {
+    const user = this.currentUserValue;
+    return user?.role === role || user?.roles?.includes(role) || false;
+  }
+
+  /**
+   * Check if the current user has any of the specified roles
+   * @param roles The roles to check for
+   */
+  hasAnyRole(roles: string[]): boolean {
+    const user = this.currentUserValue;
+    if (!user) return false;
+    return roles.some(role => this.hasRole(role));
+  }
+
+  /**
+   * Update the current user's information
+   * @param user The updated user object
+   */
+  updateUser(user: User): void {
+    if (user) {
+      this.storageService.setItem(this.USER_KEY, user);
+      this.currentUserSubject.next(user);
+    }
   }
 
   /**
@@ -77,8 +211,13 @@ export class AuthService {
   register(userData: any): Observable<User> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
       tap((response) => this.handleAuthSuccess(response)),
-      map((response) => response.user),
-      catchError(this.handleError)
+      map((response) => {
+        if (!response.user) {
+          throw new Error('No user data in response');
+        }
+        return response.user;
+      }),
+      catchError(error => this.handleError(error))
     );
   }
 
@@ -89,83 +228,21 @@ export class AuthService {
    * @param rememberMe Whether to remember the user
    */
   login(email: string, password: string, rememberMe: boolean = false): Observable<User> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
-      .pipe(
-        tap((response) => {
-          this.handleAuthSuccess(response);
-          if (rememberMe) {
-            // Store remember me token in local storage
-            this.storageService.setItem('remember_me', 'true');
-          }
-        }),
-        map((response) => response.user),
-        catchError(this.handleError)
-        })
-      );
-    */
-  }
-
-  /**
-   * Logout the current user
-   */
-  logout(): void {
-    // Remove user from local storage
-    this.storageService.removeItem(this.USER_KEY);
-    this.storageService.removeItem(this.AUTH_TOKEN_KEY);
-    this.storageService.removeItem(this.REFRESH_TOKEN_KEY);
-    this.currentUserSubject.next(null);
-    
-    // Navigate to login page
-    this.router.navigate(['/auth/login']);
-  }
-
-  /**
-   * Refresh the authentication token
-   */
-  refreshToken(): Observable<any> {
-    const refreshToken = this.storageService.getItem(this.REFRESH_TOKEN_KEY);
-    if (!refreshToken) {
-      this.logout();
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    // In a real app, this would be an HTTP request to your backend
-    return of({
-      token: 'new-mock-jwt-token',
-      refreshToken: 'new-refresh-token',
-    }).pipe(
-      tap((tokens) => {
-        this.storageService.setItem(this.AUTH_TOKEN_KEY, tokens.token);
-        this.storageService.setItem(this.REFRESH_TOKEN_KEY, tokens.refreshToken);
-      })
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
+      tap((response) => {
+        this.handleAuthSuccess(response);
+        if (rememberMe) {
+          // Store remember me token in local storage
+          this.storageService.setItem('remember_me', 'true');
+        }
+      }),
+      map((response) => {
+        if (!response.user) {
+          throw new Error('No user data in response');
+        }
+        return response.user;
+      }),
+      catchError(error => this.handleError(error))
     );
-  }
-
-  /**
-   * Check if the current user has a specific role
-   * @param role The role to check for
-   */
-  hasRole(role: string): boolean {
-    const user = this.currentUserValue;
-    return user ? user.role === role : false;
-  }
-
-  /**
-   * Check if the current user has any of the specified roles
-   * @param roles The roles to check for
-   */
-  hasAnyRole(roles: string[]): boolean {
-    const user = this.currentUserValue;
-    return user ? roles.includes(user.role) : false;
-  }
-
-  /**
-   * Update the current user's information
-   * @param user The updated user object
-   */
-  updateUser(user: User): void {
-    this.storageService.setItem(this.USER_KEY, JSON.stringify(user));
-    this.currentUserSubject.next(user);
   }
 }

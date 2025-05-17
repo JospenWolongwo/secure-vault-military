@@ -12,6 +12,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 
 // Services
 import { AuthService } from '../../core/services/auth.service';
+import { MilitaryVerificationService } from '../../core/services/military-verification.service';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, data: { title: 'Login' } },
@@ -30,12 +31,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    LoginComponent,
-    RegisterComponent,
-    ForgotPasswordComponent,
-    ResetPasswordComponent,
-  ],
+  // No need to declare or import standalone components here
+  // They are loaded via the router
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
@@ -43,6 +40,9 @@ const routes: Routes = [
     FormsModule,
     SharedModule,
   ],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    MilitaryVerificationService
+  ]
 })
 export class AuthModule {}

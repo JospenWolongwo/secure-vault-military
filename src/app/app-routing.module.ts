@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
-import { Role } from './core/models/role.model';
+import { Role } from './core/models/user.model';
 
 export const APP_ROUTES: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'auth',
     pathMatch: 'full',
   },
   {
@@ -16,38 +16,13 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'dashboard',
-    loadChildren: () =>
-      import('./features/dashboard/dashboard.module').then(
-        (m) => m.DashboardModule
-      ),
     canActivate: [AuthGuard],
-  },
-  {
-    path: 'documents',
     loadChildren: () =>
-      import('./features/documents/documents.module').then(
-        (m) => m.DocumentsModule
-      ),
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'announcements',
-    loadChildren: () =>
-      import('./features/announcements/announcements.module').then(
-        (m) => m.AnnouncementsModule
-      ),
-    canActivate: [AuthGuard],
-  },
-  {
-    path: 'admin',
-    loadChildren: () =>
-      import('./features/admin/admin.module').then((m) => m.AdminModule),
-    canActivate: [AuthGuard],
-    data: { roles: [Role.Admin] },
+      import('./features/auth/auth.module').then((m) => m.AuthModule),
   },
   {
     path: '**',
-    redirectTo: 'dashboard',
+    redirectTo: 'auth',
   },
 ];
 

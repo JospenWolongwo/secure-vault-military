@@ -60,10 +60,10 @@ h6 {
 a {
   color: var(--primary-color);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: opacity 0.3s ease;
 
   &:hover {
-    color: darken(var(--primary-color), 10%);
+    opacity: 0.8;
   }
 }
 

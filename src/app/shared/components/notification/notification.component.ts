@@ -1,9 +1,19 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef, MatSnackBarModule } from '@angular/material/snack-bar';
 import { NotificationConfig, NotificationType } from '../../../core/services/notification.service';
 
 @Component({
+  standalone: true,
   selector: 'app-notification',
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSnackBarModule
+  ],
   template: `
     <div class="notification-container" [ngClass]="type">
       <div class="notification-icon">

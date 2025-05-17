@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -8,24 +9,39 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class LanguageService {
   private currentLanguageSubject: BehaviorSubject<string>;
   public currentLanguage$: Observable<string>;
+  private translate = inject(TranslateService);
+  private isInitialized = false;
 
-  constructor(private translate: TranslateService) {
+  constructor() {
     // Set the default language to French
     const defaultLanguage = 'fr';
-    this.translate.setDefaultLang(defaultLanguage);
     
-    // Try to get the language from localStorage, otherwise use the browser language
-    const savedLanguage = localStorage.getItem('userLanguage') || 
-                         this.translate.getBrowserLang() || 
-                         defaultLanguage;
-    
-    // Ensure the language is either 'fr' or 'en'
-    const initialLanguage = ['fr', 'en'].includes(savedLanguage) ? savedLanguage : defaultLanguage;
-    
-    this.currentLanguageSubject = new BehaviorSubject<string>(initialLanguage);
+    // Initialize with default language first
+    this.currentLanguageSubject = new BehaviorSubject<string>(defaultLanguage);
     this.currentLanguage$ = this.currentLanguageSubject.asObservable();
     
-    this.setLanguage(initialLanguage);
+    // Initialize the service
+    this.initialize();
+  }
+  
+  private initialize(): void {
+    if (this.isInitialized) return;
+    
+    // Set default language
+    this.translate.setDefaultLang('fr');
+    
+    // Try to get the language from localStorage, otherwise use the browser language
+    const savedLanguage = localStorage.getItem('userLanguage');
+    const browserLang = this.translate.getBrowserLang();
+    const initialLanguage = this.getValidLanguage(savedLanguage || browserLang || 'fr');
+    
+    // Set the language
+    this.setLanguage(initialLanguage, true);
+    this.isInitialized = true;
+  }
+  
+  private getValidLanguage(lang: string): 'fr' | 'en' {
+    return ['fr', 'en'].includes(lang) ? lang as 'fr' | 'en' : 'fr';
   }
 
   /**
@@ -38,13 +54,28 @@ export class LanguageService {
   /**
    * Sets the application language
    * @param language The language code ('fr' or 'en')
+   * @param force Force the language change even if it's the same as the current language
    */
-  public setLanguage(language: 'fr' | 'en'): void {
-    if (language === 'fr' || language === 'en') {
-      this.translate.use(language);
-      this.currentLanguageSubject.next(language);
+  public setLanguage(language: 'fr' | 'en', force: boolean = false): void {
+    if ((language === 'fr' || language === 'en') && (force || language !== this.currentLanguageSubject.value)) {
+      // Update the language in localStorage
       localStorage.setItem('userLanguage', language);
+      
+      // Update the document language
       document.documentElement.lang = language;
+      
+      // Update the current language subject
+      this.currentLanguageSubject.next(language);
+      
+      // Tell the translate service to use the new language
+      this.translate.use(language).subscribe({
+        next: () => {
+          console.log(`Language changed to ${language}`);
+        },
+        error: (err) => {
+          console.error(`Failed to change language to ${language}:`, err);
+        }
+      });
     }
   }
 
