@@ -4,14 +4,22 @@ import { RouterModule, Routes } from '@angular/router';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { SharedModule } from '../../shared/shared.module';
 
+// Material modules
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslateModule } from '@ngx-translate/core';
+
 // Components
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ConfirmEmailComponent } from './components/confirm-email/confirm-email.component';
 
 // Services
 import { AuthService } from '../../core/services/auth.service';
+import { MilitaryVerificationService } from '../../core/services/military-verification.service';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, data: { title: 'Login' } },
@@ -26,23 +34,47 @@ const routes: Routes = [
     component: ResetPasswordComponent,
     data: { title: 'Reset Password' },
   },
+  {
+    path: 'confirm-email',
+    component: ConfirmEmailComponent,
+    data: { title: 'Confirm Email' },
+  },
+  {
+    path: 'confirm-email/:email',
+    component: ConfirmEmailComponent,
+    data: { title: 'Confirm Email' },
+  },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];
 
 @NgModule({
-  declarations: [
+  declarations: [],
+  imports: [
+    // Angular modules
+    CommonModule,
+    RouterModule.forChild(routes),
+    
+    // Standalone components
     LoginComponent,
     RegisterComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-  ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    ReactiveFormsModule,
-    FormsModule,
+    ConfirmEmailComponent,
+    
+    // Shared module
     SharedModule,
+    
+    // Material modules
+    MatCardModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    
+    // i18n
+    TranslateModule.forChild()
   ],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    MilitaryVerificationService
+  ]
 })
 export class AuthModule {}

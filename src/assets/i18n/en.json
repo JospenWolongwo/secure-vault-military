@@ -1,0 +1,267 @@
+{
+  "APP": {
+    "TITLE": "SecureVault Military",
+    "DESCRIPTION": "Secure document management solution for armed forces"
+  },
+  "AUTH": {
+    "MILITARY_ID": {
+      "LABEL": "Military ID",
+      "HINT": "Your official military identification number",
+      "VERIFYING": "Verifying...",
+      "ERRORS": {
+        "REQUIRED": "Military ID is required",
+        "MIN_LENGTH": "Military ID must be at least 6 characters",
+        "MAX_LENGTH": "Military ID cannot exceed 20 characters",
+        "PATTERN": "Only letters, numbers and hyphens are allowed",
+        "INVALID": "Invalid military ID. Please check and try again.",
+        "VERIFICATION_ERROR": "Unable to verify military ID. Please try again later.",
+        "PENDING": "Please wait while we verify your military ID"
+      }
+    },
+    "LOGIN": {
+      "TITLE": "Sign In",
+      "SUBTITLE": "Sign in to your account",
+      "EMAIL": "Email Address",
+      "EMAIL_LABEL": "Email Address",
+      "EMAIL_PLACEHOLDER": "Enter your email address",
+      "PASSWORD_LABEL": "Password",
+      "PASSWORD_PLACEHOLDER": "Enter your password",
+      "REMEMBER_ME": "Remember me",
+      "FORGOT_PASSWORD": "Forgot password?",
+      "SIGN_IN_BUTTON": "Sign In",
+      "NO_ACCOUNT": "Don't have an account?",
+      "SIGN_UP_LINK": "Sign up",
+      "SUCCESS": "Login successful!",
+      "SHOW_PASSWORD": "Show password",
+      "HIDE_PASSWORD": "Hide password",
+      "ERRORS": {
+        "REQUIRED": "This field is required",
+        "INVALID_EMAIL": "Please enter a valid email address",
+        "GENERIC": "Login failed. Please try again.",
+        "INVALID_CREDENTIALS": "Invalid email or password. Please try again.",
+        "EMAIL_NOT_CONFIRMED": "Please verify your email address before logging in. Check your inbox for the verification email.",
+        "CONNECTION_ERROR": "Unable to connect to the server. Please check your internet connection and try again."
+      }
+    },
+    "REGISTER": {
+      "TITLE": "Create Account",
+      "SUBTITLE": "Create your SecureVault account",
+      "SUCCESS_MESSAGE": "Registration successful! We've sent a verification email to {{email}}. Please check your inbox to verify your account.",
+      "FIRST_NAME": "First name",
+      "LAST_NAME": "Last name",
+      "RANK": "Rank",
+      "UNIT": "Unit",
+      "EMAIL": "Email address",
+      "PASSWORD": "Password",
+      "PASSWORD_PLACEHOLDER": "Create a secure password",
+      "CONFIRM_PASSWORD": "Confirm password",
+      "CONFIRM_PASSWORD_PLACEHOLDER": "Confirm your password",
+      "SUBMIT": "Sign up",
+      "HAVE_ACCOUNT": "Already have an account?",
+      "LOGIN": "Sign in",
+      "SHOW_PASSWORD": "Show password",
+      "HIDE_PASSWORD": "Hide password",
+      "ERRORS": {
+        "REQUIRED": "This field is required",
+        "PASSWORD_MISMATCH": "Passwords do not match",
+        "PASSWORD_STRENGTH": "Password must be at least 8 characters long",
+        "PASSWORD_REQUIREMENTS": "Password must include:",
+        "PASSWORD_UPPERCASE": "At least one uppercase letter (A-Z)",
+        "PASSWORD_LOWERCASE": "At least one lowercase letter (a-z)",
+        "PASSWORD_NUMBER": "At least one number (0-9)",
+        "PASSWORD_SPECIAL": "At least one special character (e.g., !@#$%^&*)",
+        "CONFIRM_PASSWORD_REQUIRED": "Please confirm your password",
+        "EMAIL_TAKEN": "This email is already registered. Please use a different email or try to log in.",
+        "REGISTRATION_FAILED": "Registration failed. Please try again.",
+        "INVALID_PASSWORD": "Invalid password. Please check the requirements and try again.",
+        "WEAK_PASSWORD": "Password is too weak. Please use a stronger password.",
+        "INVALID_EMAIL": "Please enter a valid email address.",
+        "NETWORK_ERROR": "Network error. Please check your connection and try again."
+      }
+    },
+    "FORGOT_PASSWORD": {
+      "TITLE": "Forgot Password",
+      "SUBTITLE": "Reset your password",
+      "INSTRUCTIONS": "Enter the email address associated with your account and we'll send you a link to reset your password.",
+      "EMAIL": "Email address",
+      "EMAIL_PLACEHOLDER": "Enter your email address",
+      "SUBMIT": "Send reset link",
+      "BACK_TO_LOGIN": "Back to login",
+      "SUCCESS": "A password reset link has been sent to your email address.",
+      "ERRORS": {
+        "EMAIL_REQUIRED": "Email is required",
+        "INVALID_EMAIL": "Please enter a valid email address",
+        "EMAIL_NOT_FOUND": "No account found with this email address.",
+        "GENERIC": "Failed to send reset link. Please try again."
+      }
+    },
+    "CONFIRM_EMAIL": {
+      "TITLE": "Verify Your Email",
+      "SUBTITLE": "One last step to activate your account",
+      "INSTRUCTIONS": "We've sent a verification email to your address. Please check your inbox and click the verification link to activate your account.",
+      "CHECK_SPAM": "If you don't see the email, please check your spam or junk folder.",
+      "RESEND_BUTTON": "Resend Verification Email",
+      "SUCCESS": "Verification email sent successfully!",
+      "ERRORS": {
+        "EMAIL_REQUIRED": "Email address is required",
+        "RESEND_FAILED": "Failed to resend verification email. Please try again.",
+        "INVALID_TOKEN": "Invalid or expired verification link.",
+        "GENERIC": "An error occurred. Please try again."
+      }
+    },
+    "RESET_PASSWORD": {
+      "TITLE": "Reset Your Password",
+      "SUBTITLE": "Create a new password for your account",
+      "INSTRUCTIONS": "Please enter your new password below. Make sure it's strong and secure.",
+      "PASSWORD": "New password",
+      "CONFIRM_PASSWORD": "Confirm new password",
+      "SUBMIT": "Reset password",
+      "SUCCESS_TITLE": "Password Reset Successful!",
+      "SUCCESS_MESSAGE": "Your password has been successfully updated. You can now log in with your new password.",
+      "BACK_TO_LOGIN": "Back to login",
+      "PASSWORD_HINT": "At least 8 characters, 1 number, 1 uppercase, 1 lowercase",
+      "ERRORS": {
+        "PASSWORD_REQUIRED": "Password is required",
+        "PASSWORD_PATTERN": "Password must be at least 8 characters long and include uppercase, lowercase and numbers",
+        "CONFIRM_PASSWORD_REQUIRED": "Please confirm your password",
+        "PASSWORDS_MISMATCH": "Passwords do not match",
+        "INVALID_TOKEN": "Invalid or expired reset token. Please request a new password reset link.",
+        "GENERIC": "Failed to reset password. Please try again."
+      }
+    }
+  },
+  "DOCUMENTS": {
+    "LIST": {
+      "TITLE": "My Documents",
+      "UPLOAD_DOCUMENT": "Upload Document",
+      "SEARCH_PLACEHOLDER": "Search by name, tag, or description",
+      "SEARCH_LABEL": "Search documents",
+      "FILTER_LABEL": "Filter by",
+      "ALL_DOCUMENTS": "All Documents",
+      "RECENTLY_OPENED": "Recently Opened",
+      "FAVORITES": "Favorites",
+      "LOADING": "Loading documents...",
+      "NO_DOCUMENTS": "No documents found",
+      "UPLOAD_FIRST": "Get started by uploading your first document",
+      "UNTITLED": "Untitled Document",
+      "VIEW": "View",
+      "DOWNLOAD": "Download",
+      "MORE": "More",
+      "SHARE": "Share",
+      "RENAME": "Rename",
+      "DELETE": "Delete"
+    }
+  },
+  "DASHBOARD": {
+    "USER": {
+      "DEFAULT": "User"
+    },
+    "HOME": {
+      "LOADING": "Loading your dashboard...",
+      "WELCOME": "Welcome back, ",
+      "SUBTITLE": "Here's what's happening with your documents today",
+      "UPLOAD_NEW": "Upload New",
+      "LAST_LOGIN": "Last login: {{time}}",
+      "UPLOAD_DOCUMENT": "Upload Document",
+      "VIEW_DOCUMENTS": "View Documents",
+      "EDIT_PROFILE": "Edit Profile",
+      "RECENT_DOCUMENTS": "Recent Documents",
+      "NO_DOCUMENTS": "No recent documents",
+      "UPLOAD_FIRST": "Upload your first document",
+      "QUICK_ACTIONS": "Quick Actions",
+      "RECENT_ACTIVITIES": "Recent Activities",
+      "STORAGE_USAGE": "Storage Usage",
+      "STORAGE_USED": "{{used}} of {{total}} used",
+      "STORAGE_PERCENTAGE": "{{percentage}}% used",
+      "STORAGE_MIN": "0 GB",
+      "DOCUMENT_UNTITLED": "Untitled Document",
+      "DOCUMENT_TYPE_DEFAULT": "Document",
+      "DOCUMENT_SIZE": "Size: {{size}}",
+      "DOCUMENT_DATE": "Updated: {{date}}",
+      "ACTIVITY_TIME": "{{time}}",
+      "ACTIVITY_TYPES": {
+        "upload": "Document Uploaded",
+        "edit": "Document Edited",
+        "share": "Document Shared",
+        "delete": "Document Deleted",
+        "login": "User Logged In"
+      },
+      "TIME": {
+        "YEARS_AGO": "{{count}} years ago",
+        "MONTHS_AGO": "{{count}} months ago",
+        "DAYS_AGO": "{{count}} days ago",
+        "HOURS_AGO": "{{count}} hours ago",
+        "MINUTES_AGO": "{{count}} minutes ago",
+        "SECONDS_AGO": "{{count}} seconds ago"
+      },
+      "STATS": {
+        "TOTAL_DOCUMENTS": "Total Documents",
+        "STORAGE_USED": "Storage Used",
+        "RECENT_ACTIVITIES": "Recent Activities"
+      }
+    },
+    "MENU": {
+      "DASHBOARD": "Dashboard",
+      "DOCUMENTS": "Documents",
+      "ANALYTICS": "Analytics",
+      "NOTIFICATIONS": "Notifications",
+      "SETTINGS": "Settings",
+      "LOGOUT": "Logout",
+      "MY_PROFILE": "My Profile"
+    },
+    "SEARCH": {
+      "PLACEHOLDER": "Search..."
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "MARK_ALL_READ": "Mark all as read",
+      "NO_NOTIFICATIONS": "No new notifications",
+      "VIEW_ALL": "View All Notifications"
+    },
+    "FOOTER": {
+      "COPYRIGHT": "© {{year}} SecureVault. All rights reserved.",
+      "PRIVACY_POLICY": "Privacy Policy",
+      "TERMS_OF_SERVICE": "Terms of Service",
+      "HELP_CENTER": "Help Center"
+    }
+  },
+  "COMMON": {
+    "BACK_TO_LOGIN": "Back to Login",
+    "LOADING": "Loading...",
+    "ERRORS": {
+      "GENERIC": "An error occurred. Please try again later.",
+      "NETWORK": "Unable to connect to the server. Please check your connection.",
+      "UNAUTHORIZED": "Unauthorized. Please log in.",
+      "FORBIDDEN": "You don't have permission to perform this action.",
+      "NOT_FOUND": "The requested resource was not found.",
+      "SERVER_ERROR": "Internal server error. Please contact the administrator.",
+      "PAGE_NOT_FOUND": {
+        "TITLE": "Page Not Found",
+        "MESSAGE": "We're sorry, the page you're looking for doesn't exist or is still under development.",
+        "BACK_TO_DASHBOARD": "Back to Dashboard",
+        "BACK_TO_LOGIN": "Back to Login",
+        "VIEW_DOCUMENTS": "View Documents",
+        "CONTACT_SUPPORT": "If you believe this is an error, please contact support with the error ID below:"
+      }
+    },
+    "BUTTONS": {
+      "SAVE": "Save",
+      "CANCEL": "Cancel",
+      "DELETE": "Delete",
+      "EDIT": "Edit",
+      "BACK": "Back",
+      "NEXT": "Next",
+      "PREVIOUS": "Previous",
+      "CLOSE": "Close",
+      "CONFIRM": "Confirm",
+      "SUBMIT": "Submit"
+    },
+    "VALIDATION": {
+      "REQUIRED": "This field is required",
+      "EMAIL": "Please enter a valid email address",
+      "MIN_LENGTH": "Must be at least {{length}} characters",
+      "MAX_LENGTH": "Must not exceed {{length}} characters",
+      "PATTERN": "Invalid format"
+    }
+  }
+}

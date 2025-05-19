@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { environment } from '../../../../environments/environment';
+import { environment } from '@environments/environment';
 import { User } from '../models/user.model';
 import { StorageService } from './storage.service';
 

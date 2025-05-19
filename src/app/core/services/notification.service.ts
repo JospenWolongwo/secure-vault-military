@@ -94,6 +94,28 @@ export class NotificationService {
   }
 
   /**
+   * Shows a success notification
+   * @param message The message to display
+   */
+  success(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 3000,
+      panelClass: ['success-snackbar']
+    });
+  }
+
+  /**
+   * Shows an error notification
+   * @param message The message to display
+   */
+  error(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 5000,
+      panelClass: ['error-snackbar']
+    });
+  }
+
+  /**
    * Gets the panel classes based on the notification type
    * @param type The notification type
    * @param customClasses Custom CSS classes

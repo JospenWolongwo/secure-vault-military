@@ -1,0 +1,389 @@
+@use '@angular/material' as mat;
+
+.document-upload-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  
+  .form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    
+    .half-width {
+      flex: 1;
+      min-width: 0; // Prevents flex items from overflowing
+    }
+  }
+  
+  .loading-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    
+    mat-spinner {
+      margin-right: 0.5rem;
+    }
+  }
+  
+  .info-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    color: rgba(0, 0, 0, 0.54);
+    vertical-align: middle;
+  }
+  
+  mat-card {
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    
+    mat-card-header {
+      padding: 1.5rem 1.5rem 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ee 100%);
+      margin: 0;
+      
+      mat-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+      }
+      
+      mat-card-subtitle {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+      }
+    }
+    
+    mat-card-content {
+      padding: 1.5rem;
+    }
+  }
+  
+  .upload-form {
+    .form-section {
+      margin-bottom: 2rem;
+      
+      .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0 0 1rem 0;
+        display: flex;
+        align-items: center;
+        
+        &::before {
+          content: '';
+          display: inline-block;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background-color: #3f51b5;
+          color: white;
+          text-align: center;
+          line-height: 24px;
+          margin-right: 12px;
+          font-size: 0.9rem;
+          font-weight: bold;
+        }
+        
+        @for $i from 1 through 3 {
+          &:nth-child(#{$i})::before {
+            content: '#{$i}';
+          }
+        }
+      }
+      
+      .full-width {
+        width: 100%;
+        margin-bottom: 1.5rem;
+      }
+    }
+  }
+  
+  /* Drop Zone Styles */
+  .drop-zone {
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    background-color: #f8fafc;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    
+    &:hover, &.dragover {
+      border-color: #3f51b5;
+      background-color: #f0f4ff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(63, 81, 181, 0.1);
+    }
+    
+    .drop-zone-content {
+      .upload-icon {
+        font-size: 3.5rem;
+        width: 3.5rem;
+        height: 3.5rem;
+        color: #3f51b5;
+        margin-bottom: 1rem;
+        opacity: 0.8;
+      }
+      
+      h3 {
+        margin: 0 0 0.5rem;
+        color: #2d3748;
+        font-weight: 600;
+        font-size: 1.25rem;
+      }
+      
+      p {
+        margin: 0.5rem 0;
+        color: #718096;
+        font-size: 0.95rem;
+        
+        &.text-muted {
+          color: #a0aec0;
+          font-weight: 500;
+        }
+        
+        &.file-types, &.file-size {
+          font-size: 0.85rem;
+          color: #a0aec0;
+        }
+      }
+      
+      .file-input-container {
+        margin: 1.5rem 0;
+        
+        button {
+          padding: 0.5rem 1.5rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border-radius: 8px;
+          
+          mat-icon {
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+    
+    .file-selected {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      text-align: left;
+      
+      .file-icon {
+        font-size: 2.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        color: #4a5568;
+        margin-right: 1rem;
+      }
+      
+      .file-info {
+        flex: 1;
+        
+        h4 {
+          margin: 0 0 0.25rem;
+          color: #2d3748;
+          font-weight: 500;
+          font-size: 1rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .file-size {
+          margin: 0;
+          font-size: 0.85rem;
+          color: #718096;
+        }
+      }
+      
+      button {
+        margin-left: 0.5rem;
+      }
+    }
+  }
+  
+  /* Classification Badges */
+  .classification-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    &.unclassified {
+      background-color: #e2e8f0;
+      color: #4a5568;
+    }
+    
+    &.confidential {
+      background-color: #bee3f8;
+      color: #2b6cb0;
+    }
+    
+    &.secret {
+      background-color: #feb2b2;
+      color: #c53030;
+    }
+    
+    &.top-secret {
+      background-color: #2d3748;
+      color: white;
+    }
+  }
+  
+  /* Form Actions */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #edf2f7;
+    
+    button {
+      margin-left: 1rem;
+      min-width: 120px;
+      
+      &.upload-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        mat-icon, mat-spinner {
+          margin-right: 8px;
+        }
+        
+        mat-spinner {
+          margin-left: -8px;
+        }
+      }
+    }
+  }
+  
+  /* Upload Progress */
+  .upload-progress {
+    margin-top: 2rem;
+    
+    h3 {
+      font-size: 1.1rem;
+      color: #2d3748;
+      margin: 0 0 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #edf2f7;
+    }
+    
+    .upload-item {
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      transition: all 0.2s ease;
+      padding: 0.5rem 1rem;
+      border: 1px solid #e2e8f0;
+      
+      &:hover {
+        background-color: #f8fafc;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      
+      .upload-details {
+        flex: 1;
+        margin-left: 1rem;
+        
+        .file-name {
+          font-weight: 500;
+          color: #2d3748;
+          margin-bottom: 0.5rem;
+          font-size: 0.95rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        
+        .progress-container {
+          width: 100%;
+          
+          mat-progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 0.25rem;
+          }
+          
+          .progress-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #718096;
+            
+            .status-text {
+              display: flex;
+              align-items: center;
+              
+              &.error {
+                color: #e53e3e;
+              }
+              
+              .status-icon {
+                font-size: 1rem;
+                width: 1rem;
+                height: 1rem;
+                margin-right: 0.5rem;
+                
+                &.error {
+                  color: #e53e3e;
+                }
+              }
+            }
+            
+            .progress-percent {
+              font-weight: 500;
+              color: #4a5568;
+            }
+          }
+        }
+      }
+      
+      .cancel-button {
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+        
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 600px) {
+    padding: 16px;
+
+    .drop-zone {
+      padding: 30px 15px;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+      gap: 0.75rem;
+      
+      button {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+  }
+}

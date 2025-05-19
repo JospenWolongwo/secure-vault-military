@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 // Angular Material Modules
 import { MatButtonModule } from '@angular/material/button';
@@ -38,6 +39,10 @@ import { AutoFocusDirective } from './directives/auto-focus.directive';
 import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 
+// Components
+
+// All components are now standalone
+
 const MATERIAL_MODULES = [
   MatButtonModule,
   MatCardModule,
@@ -57,38 +62,62 @@ const MATERIAL_MODULES = [
   MatTableModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule,
+  MatTooltipModule
 ];
 
-const COMPONENTS = [
+// All components, directives, and pipes are standalone
+const STANDALONE_ITEMS = [
+  // Components
   LoadingSpinnerComponent,
   PageHeaderComponent,
   ConfirmDialogComponent,
   NotificationComponent,
+  
+  // Directives
+  ClickOutsideDirective,
+  AutoFocusDirective,
+  
+  // Pipes
+  SafeHtmlPipe,
+  FileSizePipe
 ];
 
-const DIRECTIVES = [ClickOutsideDirective, AutoFocusDirective];
-
-const PIPES = [SafeHtmlPipe, FileSizePipe];
-
 @NgModule({
-  declarations: [...COMPONENTS, ...DIRECTIVES, ...PIPES],
   imports: [
+    // Angular modules
     CommonModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    
+    // Translation module
+    TranslateModule,
+    
+    // Material modules
     ...MATERIAL_MODULES,
+    
+    // Standalone components
+    
+    // Standalone components, directives, and pipes
+    ...STANDALONE_ITEMS
   ],
+  // No declarations needed as all components are standalone
+  declarations: [],
   exports: [
+    // Re-export Angular modules
     CommonModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    
+    // Translation module
+    TranslateModule,
+    
+    // Re-export Material modules
     ...MATERIAL_MODULES,
-    ...COMPONENTS,
-    ...DIRECTIVES,
-    ...PIPES,
-  ],
-  providers: [...PIPES],
+    
+    // Re-export standalone items
+    ...STANDALONE_ITEMS
+  ]
 })
 export class SharedModule {}

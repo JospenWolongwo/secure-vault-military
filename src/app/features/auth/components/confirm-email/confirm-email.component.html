@@ -1,0 +1,61 @@
+<div class="confirm-email-container">
+  <mat-card class="confirm-email-card">
+    <mat-card-header class="confirm-email-header">
+      <mat-card-title class="confirm-email-title">
+        <mat-icon class="header-icon">email</mat-icon>
+        {{ 'AUTH.CONFIRM_EMAIL.TITLE' | translate }}
+      </mat-card-title>
+      <mat-card-subtitle class="confirm-email-subtitle">
+        {{ 'AUTH.CONFIRM_EMAIL.SUBTITLE' | translate }}
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content class="confirm-email-content">
+      <div *ngIf="!isLoading; else loading" class="content-wrapper">
+        <div class="email-icon-container">
+          <mat-icon class="email-icon">mark_email_unread</mat-icon>
+        </div>
+        
+        <h3 class="email-address">{{ email }}</h3>
+        
+        <p class="instructions">
+          {{ 'AUTH.CONFIRM_EMAIL.INSTRUCTIONS' | translate }}
+        </p>
+        
+        <div class="check-spam">
+          <mat-icon class="warning-icon">warning</mat-icon>
+          <span>{{ 'AUTH.CONFIRM_EMAIL.CHECK_SPAM' | translate }}</span>
+        </div>
+      </div>
+      
+      <ng-template #loading>
+        <div class="loading-spinner">
+          <mat-spinner diameter="60"></mat-spinner>
+          <p class="loading-text">{{ 'COMMON.LOADING' | translate }}</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+    
+    <mat-card-actions class="confirm-email-actions">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="resend-button"
+        (click)="resendConfirmation()" 
+        [disabled]="isLoading">
+        <mat-icon>refresh</mat-icon>
+        {{ 'AUTH.CONFIRM_EMAIL.RESEND_BUTTON' | translate }}
+      </button>
+      
+      <button 
+        mat-button 
+        color="primary"
+        class="back-to-login"
+        [disabled]="isLoading"
+        routerLink="/auth/login">
+        <mat-icon>arrow_back</mat-icon>
+        {{ 'COMMON.BACK_TO_LOGIN' | translate }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

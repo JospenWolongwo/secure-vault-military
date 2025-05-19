@@ -1,13 +1,39 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+
+// Translation
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+// Angular Material Modules
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-reset-password',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss']
 })
@@ -25,7 +51,8 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private translate: TranslateService
   ) {
     // Initialize the form with validation
     this.resetPasswordForm = this.formBuilder.group(
@@ -51,9 +78,13 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     this.token = this.route.snapshot.paramMap.get('token') || '';
     
     if (!this.token) {
-      this.notificationService.showError('Invalid or missing reset token');
+      this.notificationService.showError(this.translate.instant('AUTH.RESET_PASSWORD.ERRORS.INVALID_TOKEN'));
       this.router.navigate(['/auth/forgot-password']);
     }
+    
+    // Set default language
+    this.translate.setDefaultLang('fr');
+    this.translate.use('fr');
   }
 
   ngOnDestroy(): void {
@@ -82,28 +113,31 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
     // Call the authentication service
     this.authService
-      .resetPassword(this.token, password)
+      .updatePassword(this.token, password)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.loading = false;
           this.resetSuccess = true;
+          this.notificationService.showSuccess(this.translate.instant('AUTH.RESET_PASSWORD.SUCCESS_MESSAGE'));
         },
-        error: (error) => {
+        error: (error: any) => {
           this.loading = false;
-          let errorMessage = 'Failed to reset password. Please try again.';
+          let errorKey = 'AUTH.RESET_PASSWORD.ERRORS.GENERIC';
           
           if (error.status === 400) {
-            errorMessage = 'Invalid or expired reset token.';
+            errorKey = 'AUTH.RESET_PASSWORD.ERRORS.INVALID_TOKEN';
           } else if (error.status === 0) {
-            errorMessage = 'Unable to connect to the server. Please check your connection.';
+            errorKey = 'COMMON.ERRORS.NETWORK';
           } else if (error.error?.message) {
-            errorMessage = error.error.message;
+            errorKey = error.error.message;
           } else if (error.error?.errors) {
             // Handle validation errors from the server
             const errorMessages = Object.values(error.error.errors).flat();
-            errorMessage = errorMessages.join(' ');
+            errorKey = errorMessages.join(' ');
           }
+          
+          const errorMessage = this.translate.instant(errorKey);
           
           this.notificationService.showError(errorMessage);
           

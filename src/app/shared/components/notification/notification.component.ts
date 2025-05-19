@@ -1,18 +1,41 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
-import { NotificationConfig, NotificationType } from '../../../core/services/notification.service';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationType } from '../../../core/services/notification.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+
+interface NotificationData {
+  message: string;
+  type: NotificationType;
+  action?: string;
+}
 
 @Component({
+  standalone: true,
   selector: 'app-notification',
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    TranslateModule
+  ],
   template: `
-    <div class="notification-container" [ngClass]="type">
+    <div class="notification-container" [ngClass]="data.type">
       <div class="notification-icon">
-        <mat-icon *ngIf="icon" [svgIcon]="icon"></mat-icon>
+        <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
       </div>
       <div class="notification-content">
-        <div class="notification-message">{{ data.message }}</div>
+        <div class="notification-message">
+          {{ isTranslationKey(data.message) ? (data.message | translate) : data.message }}
+        </div>
         <div class="notification-action" *ngIf="data.action">
-          <button mat-button (click)="onAction()">{{ data.action }}</button>
+          <button mat-button (click)="onAction()">
+            {{ isTranslationKey(data.action) ? (data.action | translate) : data.action }}
+          </button>
         </div>
       </div>
       <button mat-icon-button class="close-button" (click)="dismiss()">
@@ -114,27 +137,35 @@ import { NotificationConfig, NotificationType } from '../../../core/services/not
     `,
   ],
 })
-export class NotificationComponent implements OnDestroy {
-  type: NotificationType = 'info';
-  icon: string | null = null;
-
+export class NotificationComponent {
   constructor(
-    @Inject(MAT_SNACK_BAR_DATA) public data: any,
-    private snackBarRef: MatSnackBarRef<NotificationComponent>
-  ) {
-    this.type = data.type || 'info';
-    this.setIcon();
-  }
+    public snackBarRef: MatSnackBarRef<NotificationComponent>,
+    @Inject(MAT_SNACK_BAR_DATA) public data: NotificationData,
+    private translate: TranslateService
+  ) {}
 
-  ngOnDestroy(): void {
-    // Cleanup if needed
+  /**
+   * Checks if the provided string is a translation key
+   * A simple heuristic: if it contains dots and either underscores or capital letters,
+   * it's likely a translation key
+   */
+  isTranslationKey(str: string): boolean {
+    if (!str) return false;
+    return str.includes('.') && (str.includes('_') || /[A-Z]/.test(str));
   }
 
   /**
-   * Dismisses the notification
+   * Returns the appropriate Material icon name based on notification type
    */
-  dismiss(): void {
-    this.snackBarRef.dismiss();
+  get icon(): string {
+    const iconMap: Record<NotificationType, string> = {
+      'success': 'check_circle',
+      'error': 'error_outline',
+      'warning': 'warning',
+      'info': 'info_outline'
+    };
+    
+    return iconMap[this.data.type || 'info'];
   }
 
   /**
@@ -145,24 +176,9 @@ export class NotificationComponent implements OnDestroy {
   }
 
   /**
-   * Sets the appropriate icon based on notification type
-   * @private
+   * Dismisses the notification
    */
-  private setIcon(): void {
-    switch (this.type) {
-      case 'success':
-        this.icon = 'check_circle';
-        break;
-      case 'error':
-        this.icon = 'error';
-        break;
-      case 'warning':
-        this.icon = 'warning';
-        break;
-      case 'info':
-      default:
-        this.icon = 'info';
-        break;
-    }
+  dismiss(): void {
+    this.snackBarRef.dismiss();
   }
 }

@@ -1,13 +1,38 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+
+// Translation
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+// Angular Material Modules
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-forgot-password',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    TranslateModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss']
 })
@@ -21,7 +46,8 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private translate: TranslateService
   ) {
     // Initialize the form
     this.forgotPasswordForm = this.formBuilder.group({
@@ -54,21 +80,23 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
           this.emailSent = true;
           this.loading = false;
           this.notificationService.showSuccess(
-            'Password reset link has been sent to your email.'
+            this.translate.instant('AUTH.FORGOT_PASSWORD.SUCCESS')
           );
           this.router.navigate(['/auth/login']);
         },
         error: (error) => {
           this.loading = false;
-          let errorMessage = 'Failed to send reset link. Please try again.';
+          let errorKey = 'AUTH.FORGOT_PASSWORD.ERRORS.GENERIC';
           
           if (error.status === 404) {
-            errorMessage = 'No account found with this email address.';
+            errorKey = 'AUTH.FORGOT_PASSWORD.ERRORS.EMAIL_NOT_FOUND';
           } else if (error.status === 0) {
-            errorMessage = 'Unable to connect to the server. Please check your connection.';
+            errorKey = 'COMMON.ERRORS.NETWORK';
           } else if (error.error?.message) {
-            errorMessage = error.error.message;
+            errorKey = error.error.message;
           }
+          
+          const errorMessage = this.translate.instant(errorKey);
           
           this.notificationService.showError(errorMessage);
         },
