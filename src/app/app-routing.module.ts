@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { Role } from './core/models/user.model';
+import { NotFoundPageComponent } from './shared/components/error-pages/not-found-page.component';
 
 export const APP_ROUTES: Routes = [
   {
@@ -22,7 +23,7 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'auth',
+    component: NotFoundPageComponent
   },
 ];
 

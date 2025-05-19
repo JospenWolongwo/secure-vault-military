@@ -36,6 +36,13 @@ export class SupabaseService implements OnDestroy {
     return this.currentUser.asObservable();
   }
 
+  /**
+   * Get the Supabase client instance
+   */
+  getClient(): SupabaseClient {
+    return this.supabase;
+  }
+
   // Sign up a new user
   signUp(email: string, password: string, userData: Partial<User>): Observable<{ user: User | null; error: Error | null }> {
     // Prepare user metadata
@@ -72,19 +79,32 @@ export class SupabaseService implements OnDestroy {
 
   // Sign in a user
   signIn(email: string, password: string): Observable<{ user: User | null; session: any | null; error: Error | null }> {
+    console.log('SupabaseService - Attempting sign in with email:', email);
+    
     return from(this.supabase.auth.signInWithPassword({ email, password })).pipe(
       map(({ data, error }) => {
-        if (error) return { user: null, session: null, error };
+        if (error) {
+          console.error('SupabaseService - Sign in error:', error);
+          return { user: null, session: null, error };
+        }
+        
+        console.log('SupabaseService - Sign in successful, processing user data');
+        // Immediately extract the session data to avoid requiring locks later
+        const sessionData = {
+          access_token: data.session?.access_token,
+          refresh_token: data.session?.refresh_token,
+          expires_at: data.session?.expires_at
+        };
         
         const user = data.user ? this.mapSupabaseUserToUser(data.user) : null;
         return { 
           user, 
-          session: data.session,
+          session: sessionData,
           error: null 
         };
       }),
       catchError((error) => {
-        console.error('Sign in error:', error);
+        console.error('SupabaseService - Sign in error:', error);
         return of({ 
           user: null, 
           session: null, 
@@ -133,6 +153,24 @@ export class SupabaseService implements OnDestroy {
       })),
       catchError((error) =>
         of({ error: error instanceof Error ? error : new Error(String(error)) })
+      )
+    );
+  }
+
+  /**
+   * Get the current session
+   */
+  getSession(): Observable<{ data: { session: any } | null; error: Error | null }> {
+    return from(this.supabase.auth.getSession()).pipe(
+      map(({ data, error }) => ({
+        data,
+        error: error ? new Error(error.message) : null,
+      })),
+      catchError((error) =>
+        of({
+          data: null,
+          error: error instanceof Error ? error : new Error(String(error)),
+        })
       )
     );
   }

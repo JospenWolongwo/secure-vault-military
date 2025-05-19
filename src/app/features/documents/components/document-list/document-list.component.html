@@ -1,0 +1,84 @@
+<div class="document-list-container">
+  <div class="document-list-header">
+    <h2>{{ 'DOCUMENTS.LIST.TITLE' | translate }}</h2>
+    <button mat-raised-button color="primary" routerLink="upload">
+      <mat-icon>upload</mat-icon>
+      {{ 'DOCUMENTS.LIST.UPLOAD_DOCUMENT' | translate }}
+    </button>
+  </div>
+
+  <div class="document-list-actions">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>{{ 'DOCUMENTS.LIST.SEARCH_LABEL' | translate }}</mat-label>
+      <input matInput placeholder="{{ 'DOCUMENTS.LIST.SEARCH_PLACEHOLDER' | translate }}" (input)="onSearch($event)">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>{{ 'DOCUMENTS.LIST.FILTER_LABEL' | translate }}</mat-label>
+      <mat-select [(ngModel)]="currentFilter" (selectionChange)="onFilterChange()">
+        <mat-option value="all">{{ 'DOCUMENTS.LIST.ALL_DOCUMENTS' | translate }}</mat-option>
+        <mat-option value="recent">{{ 'DOCUMENTS.LIST.RECENTLY_OPENED' | translate }}</mat-option>
+        <mat-option value="favorites">{{ 'DOCUMENTS.LIST.FAVORITES' | translate }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="document-list">
+    <div *ngIf="isLoading" class="loading-spinner">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>{{ 'DOCUMENTS.LIST.LOADING' | translate }}</p>
+    </div>
+
+    <div class="no-documents" *ngIf="!isLoading && (!documents || documents.length === 0)">
+      <mat-icon>folder_open</mat-icon>
+      <h3>{{ 'DOCUMENTS.LIST.NO_DOCUMENTS' | translate }}</h3>
+      <p>{{ 'DOCUMENTS.LIST.UPLOAD_FIRST' | translate }}</p>
+      <button mat-raised-button color="primary" routerLink="upload">
+        <mat-icon>upload</mat-icon>
+        {{ 'DOCUMENTS.LIST.UPLOAD_DOCUMENT' | translate }}
+      </button>
+    </div>
+
+    <div class="document-grid" *ngIf="!isLoading && documents && documents.length > 0">
+      <mat-card *ngFor="let doc of documents" class="document-card">
+        <mat-card-header>
+          <div mat-card-avatar class="document-icon">
+            <mat-icon>{{ getFileIcon(doc.fileType) }}</mat-icon>
+          </div>
+          <mat-card-title>{{ doc.title || ('DOCUMENTS.LIST.UNTITLED' | translate) }}</mat-card-title>
+          <mat-card-subtitle *ngIf="doc.fileSize !== undefined || doc.updatedAt">
+            <span *ngIf="doc.fileSize !== undefined">{{ doc.fileSize | fileSize }}</span>
+            <span *ngIf="doc.fileSize !== undefined && doc.updatedAt"> • </span>
+            <span *ngIf="doc.updatedAt">{{ doc.updatedAt | date:'medium' }}</span>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-actions align="end">
+          <button mat-icon-button (click)="onViewDocument(doc.id)" matTooltip="{{ 'DOCUMENTS.LIST.VIEW' | translate }}">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button (click)="onDownloadDocument(doc.id)" matTooltip="{{ 'DOCUMENTS.LIST.DOWNLOAD' | translate }}">
+            <mat-icon>download</mat-icon>
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="{{ 'DOCUMENTS.LIST.MORE' | translate }}">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="onShareDocument(doc.id)">
+              <mat-icon>share</mat-icon>
+              <span>{{ 'DOCUMENTS.LIST.SHARE' | translate }}</span>
+            </button>
+            <button mat-menu-item (click)="onRenameDocument(doc)">
+              <mat-icon>edit</mat-icon>
+              <span>{{ 'DOCUMENTS.LIST.RENAME' | translate }}</span>
+            </button>
+            <button mat-menu-item (click)="onDeleteDocument(doc.id)" class="delete-option">
+              <mat-icon>delete</mat-icon>
+              <span>{{ 'DOCUMENTS.LIST.DELETE' | translate }}</span>
+            </button>
+          </mat-menu>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

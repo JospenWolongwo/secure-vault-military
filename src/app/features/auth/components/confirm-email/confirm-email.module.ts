@@ -9,8 +9,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ConfirmEmailComponent } from './confirm-email.component';
 
 @NgModule({
-  declarations: [ConfirmEmailComponent],
+  declarations: [],
   imports: [
+    ConfirmEmailComponent,
     CommonModule,
     RouterModule.forChild([
       { path: '', component: ConfirmEmailComponent }

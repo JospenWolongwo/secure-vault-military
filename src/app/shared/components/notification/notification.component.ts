@@ -1,9 +1,11 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef, MatSnackBarModule } from '@angular/material/snack-bar';
 import { NotificationType } from '../../../core/services/notification.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 
 interface NotificationData {
   message: string;
@@ -18,7 +20,8 @@ interface NotificationData {
     CommonModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    TranslateModule
   ],
   template: `
     <div class="notification-container" [ngClass]="data.type">
@@ -26,9 +29,13 @@ interface NotificationData {
         <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
       </div>
       <div class="notification-content">
-        <div class="notification-message">{{ data.message }}</div>
+        <div class="notification-message">
+          {{ isTranslationKey(data.message) ? (data.message | translate) : data.message }}
+        </div>
         <div class="notification-action" *ngIf="data.action">
-          <button mat-button (click)="onAction()">{{ data.action }}</button>
+          <button mat-button (click)="onAction()">
+            {{ isTranslationKey(data.action) ? (data.action | translate) : data.action }}
+          </button>
         </div>
       </div>
       <button mat-icon-button class="close-button" (click)="dismiss()">
@@ -132,9 +139,20 @@ interface NotificationData {
 })
 export class NotificationComponent {
   constructor(
+    public snackBarRef: MatSnackBarRef<NotificationComponent>,
     @Inject(MAT_SNACK_BAR_DATA) public data: NotificationData,
-    private snackBarRef: MatSnackBarRef<NotificationComponent>
+    private translate: TranslateService
   ) {}
+
+  /**
+   * Checks if the provided string is a translation key
+   * A simple heuristic: if it contains dots and either underscores or capital letters,
+   * it's likely a translation key
+   */
+  isTranslationKey(str: string): boolean {
+    if (!str) return false;
+    return str.includes('.') && (str.includes('_') || /[A-Z]/.test(str));
+  }
 
   /**
    * Returns the appropriate Material icon name based on notification type

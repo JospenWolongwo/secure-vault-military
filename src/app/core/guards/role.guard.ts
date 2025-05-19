@@ -59,7 +59,7 @@ export class RoleGuard implements CanActivate, CanActivateChild {
 
         // Check if user has any of the required roles
         const hasRequiredRole = requiredRoles.some((role) =>
-          this.authService.hasRole(role)
+          this.authService.hasRole(role.name)
         );
 
         if (!hasRequiredRole) {

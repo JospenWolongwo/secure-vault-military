@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { LanguageSwitcherComponent } from '../../../../shared/components/language-switcher/language-switcher.component';
 import { Rank } from '../../../../core/models/user.model';
 import { MilitaryVerificationService } from '../../../../core/services/military-verification.service';
 import { first, map, switchMap, debounceTime, distinctUntilChanged, catchError, of } from 'rxjs';
@@ -33,7 +34,8 @@ import { first, map, switchMap, debounceTime, distinctUntilChanged, catchError, 
     MatIconModule,
     MatSelectModule,
     MatTooltipModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    LanguageSwitcherComponent
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']

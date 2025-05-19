@@ -1,82 +1,151 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { map, catchError, tap, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 
-import { SupabaseService } from './supabase.service';
+import { User } from '@app/core/models';
 import { StorageService } from './storage.service';
-import { User } from '../models/user.model';
+import { SupabaseService } from './supabase.service';
 
-export interface AuthResponse {
+interface AuthResponse {
+  user: User | null;
+  session?: any;
   token?: string;
   refreshToken?: string;
-  user?: User;
   requiresEmailConfirmation?: boolean;
+}
+
+interface LoginCredentials {
+  email: string;
+  password: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService implements OnDestroy {
-  private readonly AUTH_TOKEN_KEY = 'sb:token';
-  private readonly REFRESH_TOKEN_KEY = 'sb:refresh_token';
+export class AuthService {
+  // Key names used for storage
+  private readonly AUTH_TOKEN_KEY = 'auth_token'; // Changed from 'sb:token' to avoid conflicts
+  private readonly REFRESH_TOKEN_KEY = 'refresh_token'; // Changed from 'sb:refresh_token' to avoid conflicts
   private readonly USER_KEY = 'current_user';
-  
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser$: Observable<User | null>;
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+  public isAuthenticated$ = this.currentUser$.pipe(map(user => !!user));
 
   constructor(
     private supabase: SupabaseService,
     private storageService: StorageService,
     private router: Router
   ) {
-    // Initialize the current user from storage if available
-    const storedUser = this.storageService.getItem<User>(this.USER_KEY);
-    this.currentUserSubject = new BehaviorSubject<User | null>(storedUser);
-    this.currentUser$ = this.currentUserSubject.asObservable();
+    this.initializeAuthState();
   }
 
-  /**
-   * Get the current user value
-   */
+  private initializeAuthState(): void {
+    this.supabase.getSession().subscribe({
+      next: ({ data, error }) => {
+        if (error) {
+          console.error('Error getting session:', error);
+          this.clearAuthData();
+          return;
+        }
+
+        const session = data?.session;
+        if (session?.user) {
+          const user = this.mapSupabaseUserToUser(session.user);
+          this.handleSuccessfulAuth(user, session);
+        } else {
+          this.clearAuthData();
+        }
+      },
+      error: (error: any) => {
+        console.error('Error initializing auth state:', error);
+        this.clearAuthData();
+      }
+    });
+  }
+
+  private clearAuthData(): void {
+    try {
+      this.storageService.removeItem(this.AUTH_TOKEN_KEY);
+      this.storageService.removeItem(this.REFRESH_TOKEN_KEY);
+      this.storageService.removeItem(this.USER_KEY);
+      this.currentUserSubject.next(null);
+    } catch (error) {
+      console.error('Error clearing auth data:', error);
+      this.currentUserSubject.next(null);
+    }
+  }
+
+  private handleSuccessfulAuth(user: User, session: any): void {
+    try {
+      // When session is null (like during registration), we don't try to store tokens
+      if (session) {
+        // Store tokens in our storage service, not directly in localStorage to avoid lock conflicts
+        if (session.access_token) {
+          this.storageService.setItem(this.AUTH_TOKEN_KEY, session.access_token);
+        }
+        if (session.refresh_token) {
+          this.storageService.setItem(this.REFRESH_TOKEN_KEY, session.refresh_token);
+        }
+      }
+      
+      // Always store the user data
+      this.storageService.setItem(this.USER_KEY, JSON.stringify(user));
+      
+      // Update the authentication state
+      this.currentUserSubject.next(user);
+      
+      console.log('AuthService - User data processed:', user.email);
+    } catch (error) {
+      console.error('Error handling successful auth:', error);
+      this.clearAuthData();
+      throw error;
+    }
+  }
+
+  private mapSupabaseUserToUser(user: any): User {
+    const userMetadata = user.user_metadata || {};
+    return {
+      id: user.id,
+      email: user.email || '',
+      firstName: userMetadata.first_name || user['firstName'] || '',
+      lastName: userMetadata.last_name || user['lastName'] || '',
+      fullName: user.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+      role: user['role'] || userMetadata.role || 'user',
+      militaryId: user['militaryId'] || userMetadata.military_id || userMetadata['militaryId'] || '',
+      rank: user['rank'] || userMetadata.rank || '',
+      unit: user['unit'] || userMetadata.unit || '',
+      isActive: true,
+      user_metadata: userMetadata,
+      email_confirmed_at: user.email_confirmed_at,
+      isVerified: !!user.email_confirmed_at || user['isVerified'] === true,
+      createdAt: user.createdAt || new Date().toISOString(),
+      updatedAt: user.updatedAt || new Date().toISOString()
+    };
+  }
+
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
-  
-  /**
-   * Check if user is authenticated
-   */
+
   public get isAuthenticated(): boolean {
-    return this.isAuthenticatedSubject.value;
+    return !!this.currentUserValue;
   }
-  
-  /**
-   * Check if user has specific role
-   */
+
   public hasRole(role: string): boolean {
     const user = this.currentUserValue;
     return user ? user.role === role : false;
   }
 
-  /**
-   * Get the authentication token
-   */
   get token(): string | null {
     return this.storageService.getItem<string>(this.AUTH_TOKEN_KEY);
   }
 
-  /**
-   * Get the refresh token from storage
-   */
   getRefreshToken(): string | null {
     return this.storageService.getItem<string>(this.REFRESH_TOKEN_KEY);
   }
 
-  /**
-   * Refresh the authentication token
-   */
   refreshToken(): Observable<{ token: string; refreshToken: string }> {
     const refreshToken = this.getRefreshToken();
     if (!refreshToken) {
@@ -89,14 +158,9 @@ export class AuthService implements OnDestroy {
         if (!data?.session) throw new Error('No session data');
 
         const { access_token, refresh_token } = data.session;
-        
-        // Store the new tokens
-        if (access_token) {
-          this.storageService.setItem(this.AUTH_TOKEN_KEY, access_token);
-        }
-        if (refresh_token) {
-          this.storageService.setItem(this.REFRESH_TOKEN_KEY, refresh_token);
-        }
+
+        this.storageService.setItem(this.AUTH_TOKEN_KEY, access_token);
+        this.storageService.setItem(this.REFRESH_TOKEN_KEY, refresh_token);
 
         return {
           token: access_token,
@@ -106,287 +170,216 @@ export class AuthService implements OnDestroy {
     );
   }
 
-  /**
-   * Request password reset email
-   */
   forgotPassword(email: string): Observable<{ error: Error | null }> {
     return this.supabase.resetPassword(email);
   }
 
-  /**
-   * Reset password with token
-   */
   resetPassword(token: string, newPassword: string): Observable<{ error: Error | null }> {
     return this.supabase.resetPasswordWithToken(token, newPassword);
   }
 
-  /**
-   * Update password with token (for password reset flow)
-   */
   updatePassword(token: string, newPassword: string): Observable<{ error: Error | null }> {
     return this.supabase.updateUserPassword(token, newPassword);
   }
-  
-  /**
-   * Clean up on service destruction
-   */
-  ngOnDestroy() {
-    this.currentUserSubject.complete();
-    this.isAuthenticatedSubject.complete();
-  }
 
-  /**
-   * Logout user
-   */
-  logout(): Observable<{ error: Error | null }> {
-    return this.supabase.signOut().pipe(
-      tap(({ error }) => {
-        if (error) {
-          console.error('Error during sign out:', error);
+  login(email: string, password: string): Observable<AuthResponse> {
+    console.log('AuthService - Starting login process for:', email);
+    
+    // Create a new observable to manage the login flow
+    return new Observable<AuthResponse>(subscriber => {
+      // Attempt to sign in without clearing data first - this avoids lock conflicts
+      this.supabase.signIn(email, password).subscribe({
+        next: async ({ user, session, error }) => {
+          if (error) {
+            console.error('AuthService - Login error:', error);
+            this.clearAuthData();
+            subscriber.error(error);
+            return;
+          }
+
+          if (!user || !session) {
+            const errorMsg = 'No user or session returned from sign in';
+            console.error('AuthService -', errorMsg);
+            this.clearAuthData();
+            subscriber.error(new Error(errorMsg));
+            return;
+          }
+
+          try {
+            console.log('AuthService - Login successful, processing user data');
+            const userMetadata = user.user_metadata || {};
+            const nameFromEmail = email.split('@')[0];
+            const userData: User = {
+              id: user.id,
+              email: user.email || email,
+              firstName: user.firstName || userMetadata['first_name'] || (userMetadata['name'] ? userMetadata['name'].split(' ')[0] : '') || nameFromEmail,
+              lastName: user.lastName || userMetadata['last_name'] || (userMetadata['name'] ? userMetadata['name'].split(' ').slice(1).join(' ') : '') || '',
+              fullName: user.fullName || userMetadata['full_name'] || `${user.firstName || ''} ${user.lastName || ''}`.trim() || nameFromEmail || 'User',
+              role: user.role || userMetadata['role'] || 'user',
+              militaryId: user.militaryId || userMetadata['military_id'] || '',
+              rank: user.rank || userMetadata['rank'] || '',
+              unit: user.unit || userMetadata.unit || '',
+              isActive: true,
+              user_metadata: userMetadata,
+              email_confirmed_at: user.email_confirmed_at,
+              isVerified: !!user.email_confirmed_at || user['isVerified'] === true,
+              createdAt: user.createdAt || new Date().toISOString(),
+              updatedAt: user.updatedAt || new Date().toISOString()
+            };
+
+            const response: AuthResponse = {
+              user: userData,
+              session,
+              token: session.access_token,
+              refreshToken: session.refresh_token || '',
+              requiresEmailConfirmation: !user.email_confirmed_at
+            };
+
+            // Handle successful authentication
+            this.handleSuccessfulAuth(userData, session);
+            console.log('AuthService - Login successful, authentication state updated');
+            subscriber.next(response);
+            subscriber.complete();
+          } catch (error) {
+            console.error('Error processing login:', error);
+            this.clearAuthData();
+            subscriber.error(error);
+          }
+        },
+        error: (error: any) => {
+          console.error('Login error:', error);
+          this.clearAuthData();
+          subscriber.error(error);
         }
-        
-        // Clear local storage
-        this.storageService.removeItem(this.AUTH_TOKEN_KEY);
-        this.storageService.removeItem(this.REFRESH_TOKEN_KEY);
-        this.storageService.removeItem(this.USER_KEY);
-        
-        // Update current user subject
-        this.currentUserSubject.next(null);
-        this.isAuthenticatedSubject.next(false);
-        
-        // Navigate to login page
-        this.router.navigate(['/auth/login']);
+      });
+    }).pipe(
+      catchError((error: any) => {
+        return this.handleError(error);
       })
     );
   }
 
-  /**
-   * Register a new user
-   */
+  logout(): Observable<{ error: any }> {
+    return this.supabase.signOut().pipe(
+      tap({
+        next: () => {
+          this.clearAuthData();
+          this.router.navigate(['/auth/login']);
+        },
+        error: (error) => {
+          console.error('Logout error:', error);
+          this.clearAuthData();
+          this.router.navigate(['/auth/login']);
+        },
+      })
+    );
+  }
+
   register(userData: any): Observable<AuthResponse> {
-    console.log('Registering user with data:', {
-      email: userData.email,
-      hasPassword: !!userData.password,
-      hasConfirmPassword: !!userData.confirmPassword,
-      passwordsMatch: userData.password === userData.confirmPassword
-    });
-    
-    // Double check passwords match (should be handled by form validation)
+    console.log('Registering user with data:', userData);
+
     if (userData.password !== userData.confirmPassword) {
-      console.error('Password mismatch:', {
-        password: userData.password,
-        confirmPassword: userData.confirmPassword
-      });
+      console.error('Password mismatch:', userData);
       return throwError(() => new Error('AUTH.REGISTER.ERRORS.PASSWORD_MISMATCH'));
     }
-    
-    // Log the complete user data for debugging
-    console.log('Registering user with complete data:', {
-      email: userData.email,
-      hasPassword: !!userData.password,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      militaryId: userData.militaryId,
-      rank: userData.rank,
-      unit: userData.unit
-    });
-    
+
     const { email, password, confirmPassword, ...profileData } = userData;
-    
-    // Clear any existing session data that might cause conflicts
+
     this.storageService.removeItem(this.AUTH_TOKEN_KEY);
     this.storageService.removeItem(this.REFRESH_TOKEN_KEY);
-    
-    // Create a promise that resolves after a delay
-    const delay = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
-    
+
     const attemptRegistration = async (): Promise<AuthResponse> => {
       try {
-        // Add a small delay to help with the lock manager issue
-        await delay(100);
-        
-        // Call signUp and handle the Observable response
         const signUpResult = await this.supabase.signUp(email, password, profileData).toPromise();
-        
+
         if (!signUpResult) {
           throw new Error('AUTH.REGISTER.ERRORS.REGISTRATION_FAILED');
         }
-        
+
         const { user, error } = signUpResult;
-        
+
         if (error) {
           if (error.message.includes('User already registered')) {
             throw new Error('AUTH.REGISTER.ERRORS.EMAIL_TAKEN');
           }
           throw error;
         }
-        
+
         if (!user) {
           throw new Error('AUTH.REGISTER.ERRORS.REGISTRATION_FAILED');
         }
-        
-        // Don't try to log in automatically - user needs to confirm email first
+
+        const userData: User = {
+          id: user.id,
+          email: user.email || email,
+          firstName: profileData.firstName || '',
+          lastName: profileData.lastName || '',
+          fullName: `${profileData.firstName || ''} ${profileData.lastName || ''}`.trim(),
+          role: 'user',
+          isVerified: false,
+          militaryId: profileData.militaryId || '',
+          rank: profileData.rank || '',
+          unit: profileData.unit || '',
+          isActive: true,
+          email_confirmed_at: null,
+          user_metadata: { ...profileData },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+
         const response: AuthResponse = {
-          user: {
-            id: user.id,
-            email: user.email || email, // Ensure we have the email
-            firstName: profileData.firstName || '',
-            lastName: profileData.lastName || '',
-            role: 'user',
-            isVerified: false,
-            militaryId: profileData.militaryId || '',
-            rank: profileData.rank || '',
-            unit: profileData.unit || ''
-          },
+          user: userData,
+          session: null,
+          token: '',
+          refreshToken: '',
           requiresEmailConfirmation: true
         };
-        console.log('Registration successful, response:', response);
+
+        this.handleSuccessfulAuth(userData, null);
         return response;
       } catch (error: unknown) {
-        console.error('Registration attempt failed:', error);
-        
-        // Type guard to check if error is an instance of Error
-        const isError = (e: unknown): e is Error => e instanceof Error;
-        
-        // If it's a lock manager error, try one more time
-        if (isError(error) && 
-            (error.message.includes('NavigatorLockManager') || 
-             error.message.includes('lock') || 
-             error.message.includes('timeout'))) {
+        console.error('Registration error:', error);
+
+        if (error instanceof Error && (error.message.includes('NavigatorLockManager') || error.message.includes('lock') || error.message.includes('timeout'))) {
           console.log('Retrying registration after lock manager error...');
-          await delay(500); // Longer delay for retry
+          await new Promise(resolve => setTimeout(resolve, 500));
           return attemptRegistration();
         }
-        
+
         throw error;
       }
     };
-    
-    // Convert the promise to an observable
+
     return new Observable<AuthResponse>((subscriber) => {
       attemptRegistration()
         .then((result: AuthResponse) => {
           subscriber.next(result);
+          subscriber.complete();
         })
-        .catch((err) => {
-          subscriber.error(err);
+        .catch((error: any) => {
+          console.error('Registration error:', error);
+          this.clearAuthData();
+          subscriber.error(error);
         });
-    });
-  }
-
-  /**
-   * Login user
-   */
-  login(email: string, password: string): Observable<AuthResponse> {
-    return this.supabase.signIn(email, password).pipe(
-      map(({ user, session, error }) => {
-        if (error) {
-          console.error('Login error:', error);
-          throw error instanceof Error ? error : new Error('Login failed');
-        }
-        
-        if (!user) {
-          console.error('No user data returned from sign in');
-          throw new Error('Login failed: No user data');
-        }
-        
-        try {
-          // Store tokens if available
-          if (session?.access_token) {
-            this.storageService.setItem(this.AUTH_TOKEN_KEY, session.access_token);
-          }
-          if (session?.refresh_token) {
-            this.storageService.setItem(this.REFRESH_TOKEN_KEY, session.refresh_token);
-          }
-          
-          // Log user data for debugging
-          console.log('User data from login:', user);
-          
-          // Create user object with all required properties
-          const userMetadata = user.user_metadata || {};
-          const firstName = userMetadata.first_name || user['firstName'] || '';
-          const lastName = userMetadata.last_name || user['lastName'] || '';
-          const role = user['role'] || userMetadata.role || 'user';
-          const militaryId = user['militaryId'] || userMetadata.military_id || userMetadata['militaryId'] || '';
-          const rank = user['rank'] || userMetadata.rank || '';
-          const unit = user['unit'] || userMetadata.unit || '';
-          const isVerified = user.email_confirmed_at !== null || user['isVerified'] === true;
-          
-          const userData: User = {
-            id: user.id,
-            email: user.email || email,
-            firstName,
-            lastName,
-            role,
-            militaryId,
-            rank,
-            unit,
-            isActive: true,
-            user_metadata: userMetadata,
-            email_confirmed_at: user.email_confirmed_at,
-            isVerified
-          };
-          
-          // Store user data
-          this.storageService.setItem(this.USER_KEY, userData);
-          
-          const response: AuthResponse = {
-            user: userData,
-            token: session?.access_token,
-            refreshToken: session?.refresh_token
-          };
-          
-          this.handleAuthentication(response);
-          return response;
-        } catch (err) {
-          console.error('Error processing login response:', err);
-          throw new Error('Error processing login');
-        }
-      }),
-      catchError((error) => {
-        console.error('AuthService login error:', error);
+    }).pipe(
+      catchError((error: any) => {
         return this.handleError(error);
       })
     );
   }
 
-  /**
-   * Handle successful authentication
-   */
-  private handleAuthentication(response: AuthResponse): void {
-    if (response.user) {
-      // Update current user
-      this.currentUserSubject.next(response.user);
-      this.isAuthenticatedSubject.next(true);
-      
-      // Store user data in storage
-      this.storageService.setItem(this.USER_KEY, response.user);
-      
-      // Store tokens if available
-      if (response.token) {
-        this.storageService.setItem(this.AUTH_TOKEN_KEY, response.token);
-      }
-      if (response.refreshToken) {
-        this.storageService.setItem(this.REFRESH_TOKEN_KEY, response.refreshToken);
-      }
-    }
-  }
 
-  /**
-   * Handle errors
-   */
-  private handleError(error: any) {
-    console.error('Auth error:', error);
+
+  private handleError(error: any): Observable<never> {
+    console.error('AuthService error:', error);
     let errorMessage = 'An error occurred';
     
-    if (error.error_description) {
-      errorMessage = error.error_description;
-    } else if (error.message) {
+    if (error instanceof Error) {
       errorMessage = error.message;
-    } else if (error.status && error.status === 400) {
-      errorMessage = 'Invalid email or password';
-    } else if (error.status && error.status >= 500) {
-      errorMessage = 'Server error. Please try again later.';
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error?.message) {
+      errorMessage = error.message;
     }
     
     return throwError(() => new Error(errorMessage));
