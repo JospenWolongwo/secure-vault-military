@@ -138,20 +138,25 @@ securevault-military/
     - [x] Configurer ESLint et Prettier pour la qualité du code
     - [x] Mettre en place le système de versionnement Git
 
-- [x] **Configuration Supabase** - COMPLETED ✅
+- [ ] **Configuration Supabase** - IN PROGRESS 🔄
     - [x] Installer la dépendance @supabase/supabase-js
     - [x] Créer un projet sur Supabase
-    - [x] Configurer l'authentification (providers, règles)
+    - [x] Configurer l'authentification de base
     - [x] Créer le schéma de base de données initial
-        - [x] Table des utilisateurs avec champs militaires
+        - [x] Table des profils (utilisateurs)
         - [x] Table des rôles et permissions
         - [x] Table des documents
-    - [x] Configurer le système de stockage (buckets)
-        - [x] Créer des buckets pour les documents classifiés
-        - [x] Configurer les politiques d'accès
+        - [x] Table des catégories de documents
+        - [x] Table des communications
+        - [x] Table des destinataires de communication
+    - [ ] Configurer le système de stockage (buckets)
+        - [ ] Créer des buckets pour les documents classifiés
+        - [ ] Configurer les politiques d'accès
     - [x] Configurer les règles de sécurité RLS (Row Level Security)
         - [x] Politiques pour les utilisateurs
         - [x] Politiques pour les administrateurs
+    - [ ] Ajouter des index pour les performances
+    - [ ] Configurer les fonctions stockées nécessaires
 
 - [x] **Environnement de Développement**
     - [x] Configurer les fichiers d'environnement (dev, prod)
@@ -281,6 +286,12 @@ securevault-military/
   - [x] Implémenter le changement de langue avec sélecteur
   - [x] Créer le composant de sélecteur de langue
   - [x] Configurer la détection automatique de la langue du navigateur
+  - [x] Traduire les composants d'authentification (login, register)
+  - [x] Traduire le composant NotFound
+  - [x] Traduire le tableau de bord principal (dashboard)
+  - [x] Traduire la page d'accueil (dashboard/home)
+  - [x] Traduire la liste de documents (documents/list)
+  - [ ] Compléter les traductions restantes (upload, preview, admin)
 
 - [ ] **Préparation au Déploiement**
 

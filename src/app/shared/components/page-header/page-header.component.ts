@@ -8,7 +8,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIcon } from '@angular/material/icon';
 import { MatDivider } from '@angular/material/divider';
-import { LanguageSelectorComponent } from '../language-selector/language-selector.component';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 
 @Component({
   standalone: true,
@@ -25,7 +25,7 @@ import { LanguageSelectorComponent } from '../language-selector/language-selecto
     MatDividerModule,
     MatIcon,
     MatDivider,
-    LanguageSelectorComponent
+    LanguageSwitcherComponent
   ],
   template: `
     <div class="page-header" [ngClass]="{ 'with-breadcrumbs': breadcrumbs && breadcrumbs.length > 0 }">
@@ -41,7 +41,7 @@ import { LanguageSelectorComponent } from '../language-selector/language-selecto
         </div>
         
         <div class="header-actions">
-          <app-language-selector class="language-selector"></app-language-selector>
+          <app-language-switcher class="language-selector"></app-language-switcher>
           <div class="actions" *ngIf="showActionButtons">
             <ng-content select="[actions]"></ng-content>
           </div>

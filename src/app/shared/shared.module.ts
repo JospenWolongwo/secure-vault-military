@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 // Angular Material Modules
 import { MatButtonModule } from '@angular/material/button';
@@ -39,7 +40,6 @@ import { SafeHtmlPipe } from './pipes/safe-html.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 
 // Components
-import { LanguageSelectorComponent } from './components/language-selector/language-selector.component';
 
 // All components are now standalone
 
@@ -90,11 +90,13 @@ const STANDALONE_ITEMS = [
     FormsModule,
     ReactiveFormsModule,
     
+    // Translation module
+    TranslateModule,
+    
     // Material modules
     ...MATERIAL_MODULES,
     
     // Standalone components
-    LanguageSelectorComponent,
     
     // Standalone components, directives, and pipes
     ...STANDALONE_ITEMS
@@ -107,6 +109,9 @@ const STANDALONE_ITEMS = [
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
+    
+    // Translation module
+    TranslateModule,
     
     // Re-export Material modules
     ...MATERIAL_MODULES,
