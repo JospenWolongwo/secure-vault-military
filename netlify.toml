@@ -8,16 +8,12 @@
 [context.deploy-preview]
   command = "npm run build"
 
-# Option 1: Disable all plugins (recommended for client-side Angular apps)
-[plugins]
-  package = []
-
-# Option 2: If you really need Angular Universal (server-side rendering)
-# Uncomment these lines and comment out the [plugins] section above
-# [[plugins]]
-#   package = "@netlify/plugin-angular-universal"
-#   [plugins.inputs]
-#     projectName = "secure-vault-military"
+# Since Netlify is insisting on using the Angular Universal plugin,
+# we'll explicitly configure it with the projectName parameter
+[[plugins]]
+  package = "@netlify/plugin-angular-universal"
+  [plugins.inputs]
+    projectName = "secure-vault-military"
 
 # For Single Page Applications
 [[redirects]]
