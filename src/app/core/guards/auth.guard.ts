@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   CanActivate,
   ActivatedRoute,
@@ -15,6 +15,36 @@ import { AuthService } from '../services/auth.service';
 import { Role } from '../models/user.model';
 import { User } from '../models';
 
+// Functional auth guard for newer Angular versions
+export const authGuard = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  
+  const storedUser = localStorage.getItem('current_user');
+  const storedToken = localStorage.getItem('auth_token');
+  const hasStoredCredentials = !!(storedUser && storedToken);
+  
+  // If we have stored credentials, assume authenticated
+  if (hasStoredCredentials) {
+    return true;
+  }
+  
+  return authService.currentUser$.pipe(
+    take(1),
+    map(user => {
+      const isAuthenticated = !!user;
+      
+      if (!isAuthenticated) {
+        router.navigate(['/auth/login']);
+        return false;
+      }
+      
+      return true;
+    })
+  );
+};
+
+// Class-based auth guard for backward compatibility
 @Injectable({
   providedIn: 'root',
 })
