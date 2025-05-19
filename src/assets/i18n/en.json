@@ -36,7 +36,11 @@
       "HIDE_PASSWORD": "Hide password",
       "ERRORS": {
         "REQUIRED": "This field is required",
-        "INVALID_EMAIL": "Please enter a valid email address"
+        "INVALID_EMAIL": "Please enter a valid email address",
+        "GENERIC": "Login failed. Please try again.",
+        "INVALID_CREDENTIALS": "Invalid email or password. Please try again.",
+        "EMAIL_NOT_CONFIRMED": "Please verify your email address before logging in. Check your inbox for the verification email.",
+        "CONNECTION_ERROR": "Unable to connect to the server. Please check your internet connection and try again."
       }
     },
     "REGISTER": {
@@ -126,6 +130,101 @@
       }
     }
   },
+  "DOCUMENTS": {
+    "LIST": {
+      "TITLE": "My Documents",
+      "UPLOAD_DOCUMENT": "Upload Document",
+      "SEARCH_PLACEHOLDER": "Search by name, tag, or description",
+      "SEARCH_LABEL": "Search documents",
+      "FILTER_LABEL": "Filter by",
+      "ALL_DOCUMENTS": "All Documents",
+      "RECENTLY_OPENED": "Recently Opened",
+      "FAVORITES": "Favorites",
+      "LOADING": "Loading documents...",
+      "NO_DOCUMENTS": "No documents found",
+      "UPLOAD_FIRST": "Get started by uploading your first document",
+      "UNTITLED": "Untitled Document",
+      "VIEW": "View",
+      "DOWNLOAD": "Download",
+      "MORE": "More",
+      "SHARE": "Share",
+      "RENAME": "Rename",
+      "DELETE": "Delete"
+    }
+  },
+  "DASHBOARD": {
+    "USER": {
+      "DEFAULT": "User"
+    },
+    "HOME": {
+      "LOADING": "Loading your dashboard...",
+      "WELCOME": "Welcome back, ",
+      "SUBTITLE": "Here's what's happening with your documents today",
+      "UPLOAD_NEW": "Upload New",
+      "LAST_LOGIN": "Last login: {{time}}",
+      "UPLOAD_DOCUMENT": "Upload Document",
+      "VIEW_DOCUMENTS": "View Documents",
+      "EDIT_PROFILE": "Edit Profile",
+      "RECENT_DOCUMENTS": "Recent Documents",
+      "NO_DOCUMENTS": "No recent documents",
+      "UPLOAD_FIRST": "Upload your first document",
+      "QUICK_ACTIONS": "Quick Actions",
+      "RECENT_ACTIVITIES": "Recent Activities",
+      "STORAGE_USAGE": "Storage Usage",
+      "STORAGE_USED": "{{used}} of {{total}} used",
+      "STORAGE_PERCENTAGE": "{{percentage}}% used",
+      "STORAGE_MIN": "0 GB",
+      "DOCUMENT_UNTITLED": "Untitled Document",
+      "DOCUMENT_TYPE_DEFAULT": "Document",
+      "DOCUMENT_SIZE": "Size: {{size}}",
+      "DOCUMENT_DATE": "Updated: {{date}}",
+      "ACTIVITY_TIME": "{{time}}",
+      "ACTIVITY_TYPES": {
+        "upload": "Document Uploaded",
+        "edit": "Document Edited",
+        "share": "Document Shared",
+        "delete": "Document Deleted",
+        "login": "User Logged In"
+      },
+      "TIME": {
+        "YEARS_AGO": "{{count}} years ago",
+        "MONTHS_AGO": "{{count}} months ago",
+        "DAYS_AGO": "{{count}} days ago",
+        "HOURS_AGO": "{{count}} hours ago",
+        "MINUTES_AGO": "{{count}} minutes ago",
+        "SECONDS_AGO": "{{count}} seconds ago"
+      },
+      "STATS": {
+        "TOTAL_DOCUMENTS": "Total Documents",
+        "STORAGE_USED": "Storage Used",
+        "RECENT_ACTIVITIES": "Recent Activities"
+      }
+    },
+    "MENU": {
+      "DASHBOARD": "Dashboard",
+      "DOCUMENTS": "Documents",
+      "ANALYTICS": "Analytics",
+      "NOTIFICATIONS": "Notifications",
+      "SETTINGS": "Settings",
+      "LOGOUT": "Logout",
+      "MY_PROFILE": "My Profile"
+    },
+    "SEARCH": {
+      "PLACEHOLDER": "Search..."
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "MARK_ALL_READ": "Mark all as read",
+      "NO_NOTIFICATIONS": "No new notifications",
+      "VIEW_ALL": "View All Notifications"
+    },
+    "FOOTER": {
+      "COPYRIGHT": "© {{year}} SecureVault. All rights reserved.",
+      "PRIVACY_POLICY": "Privacy Policy",
+      "TERMS_OF_SERVICE": "Terms of Service",
+      "HELP_CENTER": "Help Center"
+    }
+  },
   "COMMON": {
     "BACK_TO_LOGIN": "Back to Login",
     "LOADING": "Loading...",
@@ -135,7 +234,15 @@
       "UNAUTHORIZED": "Unauthorized. Please log in.",
       "FORBIDDEN": "You don't have permission to perform this action.",
       "NOT_FOUND": "The requested resource was not found.",
-      "SERVER_ERROR": "Internal server error. Please contact the administrator."
+      "SERVER_ERROR": "Internal server error. Please contact the administrator.",
+      "PAGE_NOT_FOUND": {
+        "TITLE": "Page Not Found",
+        "MESSAGE": "We're sorry, the page you're looking for doesn't exist or is still under development.",
+        "BACK_TO_DASHBOARD": "Back to Dashboard",
+        "BACK_TO_LOGIN": "Back to Login",
+        "VIEW_DOCUMENTS": "View Documents",
+        "CONTACT_SUPPORT": "If you believe this is an error, please contact support with the error ID below:"
+      }
     },
     "BUTTONS": {
       "SAVE": "Save",

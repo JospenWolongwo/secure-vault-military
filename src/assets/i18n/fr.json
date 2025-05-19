@@ -113,6 +113,102 @@
       }
     }
   },
+  "DOCUMENTS": {
+    "LIST": {
+      "TITLE": "Mes Documents",
+      "UPLOAD_DOCUMENT": "Téléverser un Document",
+      "SEARCH_PLACEHOLDER": "Rechercher par nom, étiquette ou description",
+      "SEARCH_LABEL": "Rechercher des documents",
+      "FILTER_LABEL": "Filtrer par",
+      "ALL_DOCUMENTS": "Tous les Documents",
+      "RECENTLY_OPENED": "Récemment Ouverts",
+      "FAVORITES": "Favoris",
+      "LOADING": "Chargement des documents...",
+      "NO_DOCUMENTS": "Aucun document trouvé",
+      "UPLOAD_FIRST": "Commencez par téléverser votre premier document",
+      "UNTITLED": "Document sans titre",
+      "VIEW": "Voir",
+      "DOWNLOAD": "Télécharger",
+      "MORE": "Plus",
+      "SHARE": "Partager",
+      "RENAME": "Renommer",
+      "DELETE": "Supprimer"
+    }
+  },
+  "DASHBOARD": {
+    "USER": {
+      "DEFAULT": "Utilisateur"
+    },
+    "HOME": {
+      "LOADING": "Chargement de votre tableau de bord...",
+      "WELCOME": "Bienvenue, ",
+      "SUBTITLE": "Voici ce qui se passe avec vos documents aujourd'hui",
+      "UPLOAD_NEW": "Téléverser Nouveau",
+      "LAST_LOGIN": "Dernière connexion: {{time}}",
+      "UPLOAD_DOCUMENT": "Téléverser un Document",
+      "VIEW_DOCUMENTS": "Voir les Documents",
+      "EDIT_PROFILE": "Modifier le Profil",
+      "RECENT_DOCUMENTS": "Documents Récents",
+      "NO_DOCUMENTS": "Pas de documents récents",
+      "DOCUMENTS_APPEAR": "Vos documents récemment consultés apparaîtront ici",
+      "UPLOAD_FIRST": "Téléversez votre premier document",
+      "QUICK_ACTIONS": "Actions Rapides",
+      "RECENT_ACTIVITIES": "Activités Récentes",
+      "STORAGE_USAGE": "Utilisation du Stockage",
+      "STORAGE_USED": "{{used}} sur {{total}} utilisés",
+      "STORAGE_PERCENTAGE": "{{percentage}}% utilisé",
+      "STORAGE_MIN": "0 Go",
+      "DOCUMENT_UNTITLED": "Document sans titre",
+      "DOCUMENT_TYPE_DEFAULT": "Document",
+      "DOCUMENT_SIZE": "Taille: {{size}}",
+      "DOCUMENT_DATE": "Mis à jour: {{date}}",
+      "ACTIVITY_TIME": "{{time}}",
+      "ACTIVITY_TYPES": {
+        "upload": "Document Téléversé",
+        "edit": "Document Modifié",
+        "share": "Document Partagé",
+        "delete": "Document Supprimé",
+        "login": "Utilisateur Connecté"
+      },
+      "TIME": {
+        "YEARS_AGO": "il y a {{count}} ans",
+        "MONTHS_AGO": "il y a {{count}} mois",
+        "DAYS_AGO": "il y a {{count}} jours",
+        "HOURS_AGO": "il y a {{count}} heures",
+        "MINUTES_AGO": "il y a {{count}} minutes",
+        "SECONDS_AGO": "il y a {{count}} secondes"
+      },
+      "STATS": {
+        "TOTAL_DOCUMENTS": "Total Documents",
+        "STORAGE_USED": "Stockage Utilisé",
+        "RECENT_ACTIVITIES": "Activités Récentes"
+      }
+    },
+    "MENU": {
+      "DASHBOARD": "Tableau de Bord",
+      "DOCUMENTS": "Documents",
+      "ANALYTICS": "Analyses",
+      "NOTIFICATIONS": "Notifications",
+      "SETTINGS": "Paramètres",
+      "LOGOUT": "Déconnexion",
+      "MY_PROFILE": "Mon Profil"
+    },
+    "SEARCH": {
+      "PLACEHOLDER": "Rechercher..."
+    },
+    "NOTIFICATIONS": {
+      "TITLE": "Notifications",
+      "MARK_ALL_READ": "Marquer tout comme lu",
+      "NO_NOTIFICATIONS": "Aucune nouvelle notification",
+      "VIEW_ALL": "Voir toutes les notifications"
+    },
+    "FOOTER": {
+      "COPYRIGHT": "© {{year}} SecureVault. Tous droits réservés.",
+      "PRIVACY_POLICY": "Politique de Confidentialité",
+      "TERMS_OF_SERVICE": "Conditions d'Utilisation",
+      "HELP_CENTER": "Centre d'Aide"
+    }
+  },
   "COMMON": {
     "BACK_TO_LOGIN": "Retour à la connexion",
     "LOADING": "Chargement...",
@@ -122,7 +218,15 @@
       "UNAUTHORIZED": "Accès non autorisé. Veuillez vous connecter.",
       "FORBIDDEN": "Vous n'avez pas les droits nécessaires pour effectuer cette action.",
       "NOT_FOUND": "La ressource demandée est introuvable.",
-      "SERVER_ERROR": "Erreur interne du serveur. Veuillez contacter l'administrateur."
+      "SERVER_ERROR": "Erreur interne du serveur. Veuillez contacter l'administrateur.",
+      "PAGE_NOT_FOUND": {
+        "TITLE": "Page Non Trouvée",
+        "MESSAGE": "Nous sommes désolés, la page que vous recherchez n'existe pas ou est encore en cours de développement.",
+        "BACK_TO_DASHBOARD": "Retour au Tableau de Bord",
+        "BACK_TO_LOGIN": "Retour à la Connexion",
+        "VIEW_DOCUMENTS": "Voir les Documents",
+        "CONTACT_SUPPORT": "Si vous pensez qu'il s'agit d'une erreur, veuillez contacter le support avec l'ID d'erreur ci-dessous:"
+      }
     },
     "BUTTONS": {
       "SAVE": "Enregistrer",

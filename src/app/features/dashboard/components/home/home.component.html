@@ -1,0 +1,198 @@
+<div class="dashboard-home">
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <p class="loading-text">{{ "DASHBOARD.HOME.LOADING" | translate }}</p>
+  </div>
+
+  <!-- Content when loaded -->
+  <div *ngIf="!isLoading">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+      <div class="welcome-text">
+        <h1>
+          {{ "DASHBOARD.HOME.WELCOME" | translate: { name: "" }
+          }}<span class="user-name">{{
+            (user$ | async)?.firstName || ("DASHBOARD.USER.DEFAULT" | translate)
+          }}</span
+          >!
+        </h1>
+        <p class="subtitle">{{ "DASHBOARD.HOME.SUBTITLE" | translate }}</p>
+      </div>
+      <button
+        mat-flat-button
+        color="primary"
+        routerLink="/dashboard/documents/upload"
+      >
+        <mat-icon>add</mat-icon>
+        {{ "DASHBOARD.HOME.UPLOAD_NEW" | translate }}
+      </button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <mat-card
+        *ngFor="let stat of stats"
+        class="stat-card"
+        [ngClass]="stat.color"
+      >
+        <div class="stat-icon">
+          <mat-icon>{{ stat.icon }}</mat-icon>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-title">
+            {{ "DASHBOARD.HOME.STATS." + stat.key | translate }}
+          </div>
+        </div>
+        <div
+          *ngIf="stat.change !== 0"
+          class="stat-change"
+          [class.positive]="stat.changeType === 'increase'"
+          [class.negative]="stat.changeType === 'decrease'"
+        >
+          <mat-icon>{{
+            stat.changeType === "increase"
+              ? "trending_up"
+              : stat.changeType === "decrease"
+                ? "trending_down"
+                : "trending_flat"
+          }}</mat-icon>
+          {{ stat.change > 0 ? "+" : "" }}{{ stat.change }}%
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Recent Documents -->
+    <div class="recent-documents">
+      <h3>{{ "DASHBOARD.HOME.RECENT_DOCUMENTS" | translate }}</h3>
+
+      <!-- No documents state -->
+      <div
+        *ngIf="documentsLoaded && recentDocuments.length === 0"
+        class="empty-state"
+      >
+        <mat-icon>folder_open</mat-icon>
+        <h4>{{ "DASHBOARD.HOME.NO_DOCUMENTS" | translate }}</h4>
+        <p>{{ "DASHBOARD.HOME.DOCUMENTS_APPEAR" | translate }}</p>
+        <button
+          mat-stroked-button
+          color="primary"
+          routerLink="/dashboard/documents/upload"
+        >
+          <mat-icon>add</mat-icon>
+          {{ "DASHBOARD.HOME.UPLOAD_FIRST" | translate }}
+        </button>
+      </div>
+
+      <!-- Document list -->
+      <div *ngIf="recentDocuments.length > 0" class="document-list">
+        <mat-card
+          *ngFor="let doc of recentDocuments"
+          class="document-card"
+          [routerLink]="['/dashboard/documents', doc.id]"
+        >
+          <mat-icon class="document-icon">{{
+            getFileIcon(doc.fileType)
+          }}</mat-icon>
+          <div class="document-details">
+            <h4 class="document-title">
+              {{
+                doc.title || ("DASHBOARD.HOME.DOCUMENT_UNTITLED" | translate)
+              }}
+            </h4>
+            <p class="document-type">
+              {{
+                doc.fileType?.toUpperCase() ||
+                  ("DASHBOARD.HOME.DOCUMENT_TYPE_DEFAULT" | translate)
+              }}
+            </p>
+            <p class="document-size">
+              {{
+                "DASHBOARD.HOME.DOCUMENT_SIZE"
+                  | translate: { size: formatBytes(doc.fileSize) }
+              }}
+            </p>
+            <p class="document-date">
+              {{
+                "DASHBOARD.HOME.DOCUMENT_DATE"
+                  | translate: { date: (doc.updatedAt | date: "medium") }
+              }}
+            </p>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <h3>{{ "DASHBOARD.HOME.QUICK_ACTIONS" | translate }}</h3>
+      <div class="action-buttons">
+        <a
+          mat-ripple
+          routerLink="/dashboard/documents/upload"
+          class="action-button"
+        >
+          <mat-icon>cloud_upload</mat-icon>
+          <span>{{ "DASHBOARD.HOME.UPLOAD_DOCUMENT" | translate }}</span>
+        </a>
+        <a mat-ripple routerLink="/dashboard/documents" class="action-button">
+          <mat-icon>folder_open</mat-icon>
+          <span>{{ "DASHBOARD.HOME.VIEW_DOCUMENTS" | translate }}</span>
+        </a>
+        <a mat-ripple routerLink="/dashboard/profile" class="action-button">
+          <mat-icon>person</mat-icon>
+          <span>{{ "DASHBOARD.HOME.EDIT_PROFILE" | translate }}</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="recent-activities" *ngIf="recentActivities.length > 0">
+      <h3>{{ "DASHBOARD.HOME.RECENT_ACTIVITIES" | translate }}</h3>
+      <div class="activity-list">
+        <div *ngFor="let activity of recentActivities" class="activity-item">
+          <div class="activity-icon">
+            <mat-icon>{{ activity.icon }}</mat-icon>
+          </div>
+          <div class="activity-content">
+            <h4>
+              {{ "DASHBOARD.HOME.ACTIVITY_TYPES." + activity.type | translate }}
+            </h4>
+            <p>{{ activity.description }}</p>
+            <span class="activity-time">{{
+              "DASHBOARD.HOME.ACTIVITY_TIME"
+                | translate: { time: activity.time }
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Storage Usage -->
+    <div class="storage-usage">
+      <h3>{{ "DASHBOARD.HOME.STORAGE_USAGE" | translate }}</h3>
+      <div class="storage-details">
+        <span>{{
+          "DASHBOARD.HOME.STORAGE_USED"
+            | translate: { used: storageUsage.used, total: storageUsage.total }
+        }}</span>
+        <span>{{
+          "DASHBOARD.HOME.STORAGE_PERCENTAGE"
+            | translate
+              : { percentage: storageUsage.percentage | number: "1.0-1" }
+        }}</span>
+      </div>
+      <mat-progress-bar
+        mode="determinate"
+        [value]="storageUsage.percentage"
+        color="primary"
+      >
+      </mat-progress-bar>
+      <div class="storage-labels">
+        <span>{{ "DASHBOARD.HOME.STORAGE_MIN" | translate }}</span>
+        <span>{{ storageUsage.total }}</span>
+      </div>
+    </div>
+  </div>
+</div>
