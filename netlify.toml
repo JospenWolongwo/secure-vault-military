@@ -1,19 +1,13 @@
+# Simplified configuration - no plugins
 [build]
   command = "npm run build -- --configuration production"
   publish = "dist/secure-vault-military"
-  
+
 [context.production]
   environment = { NODE_VERSION = "18" }
 
 [context.deploy-preview]
   command = "npm run build"
-
-# Since Netlify is insisting on using the Angular Universal plugin,
-# we'll explicitly configure it with the projectName parameter
-[[plugins]]
-  package = "@netlify/plugin-angular-universal"
-  [plugins.inputs]
-    projectName = "secure-vault-military"
 
 # For Single Page Applications
 [[redirects]]
