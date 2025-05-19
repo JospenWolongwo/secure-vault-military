@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError, from } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 
 import { User } from '@app/core/models';
@@ -133,9 +133,24 @@ export class AuthService {
     return !!this.currentUserValue;
   }
 
-  public hasRole(role: string): boolean {
+  public hasRole(role: string): Observable<boolean> {
+    // Use the Supabase RPC function to correctly check roles from the database
+    return from(this.supabase.getClient().rpc('has_role', { role_name: role })).pipe(
+      map(({ data, error }) => {
+        if (error) {
+          console.error(`Error checking role ${role}:`, error);
+          return false;
+        }
+        console.log(`User has role ${role}:`, !!data);
+        return !!data;
+      })
+    );
+  }
+  
+  // Simple sync version for legacy code/guards
+  hasRoleSync(role: string): boolean {
     const user = this.currentUserValue;
-    return user ? user.role === role : false;
+    return !!user && user.role === role;
   }
 
   get token(): string | null {

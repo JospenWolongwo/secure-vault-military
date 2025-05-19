@@ -30,6 +30,9 @@ import { LanguageSwitcherComponent } from '../language-switcher/language-switche
   template: `
     <div class="page-header" [ngClass]="{ 'with-breadcrumbs': breadcrumbs && breadcrumbs.length > 0 }">
       <div class="header-content">
+        <button *ngIf="showBackButton" mat-icon-button class="back-button" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
         <div class="title-section">
           <h1 class="title">
             <ng-container *ngIf="icon">
@@ -65,6 +68,7 @@ import { LanguageSwitcherComponent } from '../language-switcher/language-switche
     `
       .page-header {
         margin-bottom: 2rem;
+        padding: 0 24px;
       }
       
       .header-content {
@@ -161,10 +165,15 @@ export class PageHeaderComponent implements OnInit {
   @Input() subtitle: string = '';
   @Input() icon: string = '';
   @Input() showActionButtons: boolean = false;
+  @Input() showBackButton: boolean = false;
   @Input() breadcrumbs: Breadcrumb[] = [];
   @Input() divider: boolean = false;
 
   constructor(private router: Router) {}
+  
+  goBack(): void {
+    window.history.back();
+  }
 
   ngOnInit(): void {
     // If no breadcrumbs are provided, generate from the current route

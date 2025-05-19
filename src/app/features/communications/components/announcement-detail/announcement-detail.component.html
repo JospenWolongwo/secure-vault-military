@@ -1,0 +1,101 @@
+<div *ngIf="loading" class="loading-container">
+  <mat-spinner diameter="40"></mat-spinner>
+</div>
+
+<ng-container *ngIf="!loading && (communication$ | async) as communication">
+  <app-page-header
+    [title]="communication.title"
+    [subtitle]="'COMMUNICATIONS.DETAIL.PUBLISHED' | translate: { date: getFormattedDate(communication.published_at || communication.created_at) }"
+    icon="campaign"
+    [showBackButton]="true"
+    backTo="/communications"
+  >
+    <div actions>
+      <button 
+        *ngIf="!communication.acknowledged_at" 
+        mat-flat-button 
+        color="primary" 
+        (click)="onAcknowledge(communication.id)"
+      >
+        <mat-icon>done_all</mat-icon>
+        {{ 'COMMUNICATIONS.DETAIL.ACKNOWLEDGE' | translate }}
+      </button>
+      
+      <button 
+        *ngIf="isAdmin" 
+        mat-stroked-button 
+        color="primary" 
+        (click)="onEdit(communication.id)"
+        class="action-button"
+      >
+        <mat-icon>edit</mat-icon>
+        {{ 'COMMON.EDIT' | translate }}
+      </button>
+      
+      <button 
+        *ngIf="isAdmin" 
+        mat-stroked-button 
+        color="warn" 
+        (click)="onDelete(communication.id)"
+        class="action-button"
+      >
+        <mat-icon>delete</mat-icon>
+        {{ 'COMMON.DELETE' | translate }}
+      </button>
+    </div>
+  </app-page-header>
+
+  <div class="announcement-container">
+    <mat-card class="announcement-card">
+      <mat-card-header>
+        <div class="meta-info">
+          <div class="status-chip">
+            <mat-icon>{{ getStatusIcon(communication) }}</mat-icon>
+            {{ getStatusLabel(communication) | translate }}
+          </div>
+          
+          <div 
+            class="priority-chip" 
+            [ngClass]="getPriorityClass(communication.priority)"
+          >
+            {{ getPriorityLabel(communication.priority) | translate }}
+          </div>
+          
+          <div *ngIf="communication.category" class="category-chip">
+            <mat-icon>category</mat-icon>
+            {{ communication.category }}
+          </div>
+        </div>
+      </mat-card-header>
+      
+      <mat-divider></mat-divider>
+      
+      <mat-card-content>
+        <div class="content-container">
+          <p class="content-text">{{ communication.content }}</p>
+        </div>
+        
+        <div *ngIf="communication.expires_at" class="expires-info">
+          <mat-icon>schedule</mat-icon>
+          {{ 'COMMUNICATIONS.DETAIL.EXPIRES' | translate: { date: getFormattedDate(communication.expires_at) } }}
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions *ngIf="!communication.acknowledged_at">
+        <button 
+          mat-flat-button 
+          color="primary" 
+          (click)="onAcknowledge(communication.id)"
+        >
+          <mat-icon>done_all</mat-icon>
+          {{ 'COMMUNICATIONS.DETAIL.ACKNOWLEDGE' | translate }}
+        </button>
+      </mat-card-actions>
+      
+      <mat-card-footer *ngIf="communication.acknowledged_at" class="acknowledgement-footer">
+        <mat-icon>verified</mat-icon>
+        {{ 'COMMUNICATIONS.DETAIL.ACKNOWLEDGED_ON' | translate: { date: getFormattedDate(communication.acknowledged_at) } }}
+      </mat-card-footer>
+    </mat-card>
+  </div>
+</ng-container>

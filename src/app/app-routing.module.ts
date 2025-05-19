@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
-import { Role } from './core/models/user.model';
 import { NotFoundPageComponent } from './shared/components/error-pages/not-found-page.component';
 
 export const APP_ROUTES: Routes = [
@@ -20,6 +19,18 @@ export const APP_ROUTES: Routes = [
     canActivate: [AuthGuard],
     loadChildren: () =>
       import('./features/dashboard/dashboard.module').then((m) => m.DashboardModule),
+  },
+  {
+    path: 'communications',
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./features/communications/communications.routes').then((m) => m.COMMUNICATIONS_ROUTES),
+  },
+  // Documents are managed within the dashboard feature
+  {
+    path: 'documents',
+    redirectTo: 'dashboard/documents',
+    pathMatch: 'full'
   },
   {
     path: '**',

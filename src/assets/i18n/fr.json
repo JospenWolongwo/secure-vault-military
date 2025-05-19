@@ -187,6 +187,7 @@
     "MENU": {
       "DASHBOARD": "Tableau de Bord",
       "DOCUMENTS": "Documents",
+      "COMMUNICATIONS": "Annonces",
       "ANALYTICS": "Analyses",
       "NOTIFICATIONS": "Notifications",
       "SETTINGS": "Paramètres",
@@ -209,9 +210,80 @@
       "HELP_CENTER": "Centre d'Aide"
     }
   },
+  "COMMUNICATIONS": {
+    "BOARD": {
+      "TITLE": "Annonces",
+      "SUBTITLE": "Restez informé avec les communications officielles",
+      "NEW_ANNOUNCEMENT": "Nouvelle Annonce",
+      "CREATE_NEW": "Créer une nouvelle annonce",
+      "SEARCH_PLACEHOLDER": "Rechercher dans les annonces",
+      "PRIORITY": "Priorité",
+      "STATUS": "Statut",
+      "NO_ANNOUNCEMENTS": "Aucune annonce disponible",
+      "CHECK_BACK": "Revenez plus tard pour de nouvelles annonces",
+      "CREATE_FIRST": "Créer Première Annonce",
+      "NO_RESULTS": "Aucun résultat trouvé",
+      "TRY_DIFFERENT_FILTERS": "Essayez d'autres termes de recherche ou filtres"
+    },
+    "DETAIL": {
+      "PUBLISHED": "Publiée le {{date}}",
+      "ACKNOWLEDGE": "Confirmer lecture",
+      "ACKNOWLEDGED_ON": "Lecture confirmée le {{date}}",
+      "EXPIRES": "Expire le {{date}}"
+    },
+    "CREATE": {
+      "TITLE": "Créer une Annonce",
+      "SUBTITLE": "Créer une nouvelle annonce officielle",
+      "TITLE_FIELD": "Titre de l'annonce",
+      "CONTENT": "Contenu",
+      "PRIORITY": "Priorité",
+      "CATEGORY": "Catégorie (optionnel)",
+      "PUBLISH_IMMEDIATELY": "Publier immédiatement",
+      "EXPIRES_AT": "Date d'expiration",
+      "EXPIRES_HINT": "Laissez vide pour aucune expiration",
+      "RECIPIENTS_INFO": "Cette annonce sera envoyée à tous les utilisateurs de la plateforme",
+      "SUBMIT": "Publier l'annonce"
+    },
+    "PRIORITY": {
+      "LOW": "Basse",
+      "NORMAL": "Normale",
+      "HIGH": "Haute",
+      "URGENT": "Urgente"
+    },
+    "STATUS": {
+      "READ": "Lue",
+      "UNREAD": "Non lue",
+      "ACKNOWLEDGED": "Confirmée"
+    },
+    "DELETE": {
+      "TITLE": "Supprimer l'annonce",
+      "CONFIRM": "Êtes-vous sûr de vouloir supprimer cette annonce ? Cette action ne peut pas être annulée."
+    },
+    "SUCCESS": {
+      "CREATED": "Annonce créée avec succès",
+      "UPDATED": "Annonce mise à jour avec succès",
+      "DELETED": "Annonce supprimée avec succès",
+      "ACKNOWLEDGED": "Lecture de l'annonce confirmée",
+      "ASSIGNED": "Destinataires assignés avec succès"
+    },
+    "ERRORS": {
+      "LOAD_FAILED": "Échec du chargement des annonces",
+      "CREATE_FAILED": "Échec de la création de l'annonce",
+      "UPDATE_FAILED": "Échec de la mise à jour de l'annonce",
+      "DELETE_FAILED": "Échec de la suppression de l'annonce",
+      "NOT_FOUND": "Annonce introuvable",
+      "ASSIGN_FAILED": "Échec de l'attribution des destinataires"
+    }
+  },
   "COMMON": {
     "BACK_TO_LOGIN": "Retour à la connexion",
     "LOADING": "Chargement...",
+    "SEARCH": "Rechercher",
+    "ALL": "Tous",
+    "VIEW_DETAILS": "Voir les détails",
+    "CANCEL": "Annuler",
+    "DELETE": "Supprimer",
+    "EDIT": "Modifier",
     "ERRORS": {
       "GENERIC": "Une erreur s'est produite. Veuillez réessayer plus tard.",
       "NETWORK": "Impossible de se connecter au serveur. Veuillez vérifier votre connexion.",

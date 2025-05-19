@@ -1,0 +1,145 @@
+<app-page-header
+  [title]="'COMMUNICATIONS.BOARD.TITLE' | translate"
+  [subtitle]="'COMMUNICATIONS.BOARD.SUBTITLE' | translate"
+  icon="campaign"
+  [showBackButton]="true"
+>
+  <div actions>
+    <!-- Home button -->
+    <button 
+      mat-stroked-button
+      color="basic"
+      routerLink="/dashboard"
+      style="margin-right: 10px;"
+    >
+      <mat-icon>home</mat-icon>
+      Dashboard
+    </button>
+    
+    <!-- Admin button - ALWAYS VISIBLE for you -->
+    <button 
+      mat-flat-button 
+      color="primary" 
+      routerLink="/communications/create"
+      [matTooltip]="'COMMUNICATIONS.BOARD.CREATE_NEW' | translate"
+      style="font-size: 14px; padding: 0 16px; height: 40px;"
+    >
+      <mat-icon>add</mat-icon>
+      Create Announcement
+    </button>
+  </div>
+</app-page-header>
+
+<div class="announcement-board-container">
+  <!-- Filters and Search -->
+  <div class="filters-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>{{ 'COMMON.SEARCH' | translate }}</mat-label>
+      <input matInput [(ngModel)]="searchTerm" placeholder="{{ 'COMMUNICATIONS.BOARD.SEARCH_PLACEHOLDER' | translate }}">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <div class="filters">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'COMMUNICATIONS.BOARD.PRIORITY' | translate }}</mat-label>
+        <mat-select [(ngModel)]="selectedPriority">
+          <mat-option [value]="null">{{ 'COMMON.ALL' | translate }}</mat-option>
+          <mat-option value="urgent">{{ 'COMMUNICATIONS.PRIORITY.URGENT' | translate }}</mat-option>
+          <mat-option value="high">{{ 'COMMUNICATIONS.PRIORITY.HIGH' | translate }}</mat-option>
+          <mat-option value="normal">{{ 'COMMUNICATIONS.PRIORITY.NORMAL' | translate }}</mat-option>
+          <mat-option value="low">{{ 'COMMUNICATIONS.PRIORITY.LOW' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'COMMUNICATIONS.BOARD.STATUS' | translate }}</mat-label>
+        <mat-select [(ngModel)]="selectedReadStatus">
+          <mat-option value="all">{{ 'COMMON.ALL' | translate }}</mat-option>
+          <mat-option value="unread">{{ 'COMMUNICATIONS.STATUS.UNREAD' | translate }}</mat-option>
+          <mat-option value="read">{{ 'COMMUNICATIONS.STATUS.READ' | translate }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <!-- Announcements List -->
+  <div *ngIf="!loading" class="announcements-list">
+    <ng-container *ngIf="(communications$ | async) as communications; else noCommunications">
+      <!-- Filtered communications -->
+      <ng-container *ngIf="(
+        communications 
+        | filter: searchTerm:'title,content' 
+        | filterByPriority: selectedPriority 
+        | filterByReadStatus: selectedReadStatus
+      ) as filteredCommunications">
+
+        <div *ngIf="filteredCommunications.length; else noResults" class="announcements-grid">
+          <mat-card 
+            *ngFor="let communication of filteredCommunications" 
+            class="announcement-card"
+            [ngClass]="{'unread': !communication.read_at}"
+            [routerLink]="['/communications', communication.id]"
+          >
+            <mat-card-header>
+              <div mat-card-avatar class="priority-icon" [ngClass]="getPriorityClass(communication.priority)">
+                <mat-icon>{{ getPriorityIcon(communication.priority) }}</mat-icon>
+              </div>
+              <mat-card-title>
+                {{ communication.title }}
+                <mat-icon 
+                  class="status-icon" 
+                  [matTooltip]="getStatusTooltip(communication) | translate"
+                >
+                  {{ getStatusIcon(communication) }}
+                </mat-icon>
+              </mat-card-title>
+              <mat-card-subtitle>
+                {{ getFormattedDate(communication.published_at || communication.created_at) }}
+              </mat-card-subtitle>
+            </mat-card-header>
+            
+            <mat-card-content>
+              <p class="content-preview">{{ communication.content | slice:0:150 }}{{ communication.content.length > 150 ? '...' : '' }}</p>
+            </mat-card-content>
+            
+            <mat-card-actions align="end">
+              <button mat-button color="primary" [routerLink]="['/communications', communication.id]">
+                {{ 'COMMON.VIEW_DETAILS' | translate }}
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+
+        <ng-template #noResults>
+          <div class="empty-state">
+            <mat-icon>filter_alt_off</mat-icon>
+            <h3>{{ 'COMMUNICATIONS.BOARD.NO_RESULTS' | translate }}</h3>
+            <p>{{ 'COMMUNICATIONS.BOARD.TRY_DIFFERENT_FILTERS' | translate }}</p>
+          </div>
+        </ng-template>
+
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noCommunications>
+      <div class="empty-state">
+        <mat-icon>campaign_off</mat-icon>
+        <h3>{{ 'COMMUNICATIONS.BOARD.NO_ANNOUNCEMENTS' | translate }}</h3>
+        <p>{{ 'COMMUNICATIONS.BOARD.CHECK_BACK' | translate }}</p>
+        <button 
+          *ngIf="isAdmin" 
+          mat-flat-button 
+          color="primary" 
+          routerLink="/communications/create"
+        >
+          {{ 'COMMUNICATIONS.BOARD.CREATE_FIRST' | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
