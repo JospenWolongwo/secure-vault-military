@@ -8,7 +8,11 @@
 [context.deploy-preview]
   command = "npm run build"
 
-# Simple SPA config (no plugins needed)
+# Explicitly disable any plugins
+[plugins]
+  package = []
+
+# For Single Page Applications
 [[redirects]]
   from = "/*"
   to = "/index.html"
