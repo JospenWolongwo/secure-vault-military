@@ -1,7 +1,7 @@
-# Simplified configuration - no plugins
+# Simple SPA configuration with correct output directory
 [build]
   command = "npm run build -- --configuration production"
-  publish = "dist/secure-vault-military"
+  publish = "dist/securevault-military"
 
 [context.production]
   environment = { NODE_VERSION = "18" }
