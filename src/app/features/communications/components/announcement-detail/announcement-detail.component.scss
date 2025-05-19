@@ -1,0 +1,125 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+.announcement-container {
+  padding: 16px;
+
+  .announcement-card {
+    max-width: 900px;
+    margin: 0 auto;
+
+    mat-card-header {
+      padding: 16px;
+      padding-bottom: 20px;
+
+      .meta-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .status-chip,
+      .priority-chip,
+      .category-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: var(--color-background-light);
+        color: var(--color-text);
+
+        mat-icon {
+          font-size: 18px;
+          height: 18px;
+          width: 18px;
+        }
+      }
+
+      .priority-chip {
+        &.priority-urgent {
+          background-color: var(--color-error);
+          color: white;
+        }
+
+        &.priority-high {
+          background-color: var(--color-warning);
+          color: white;
+        }
+
+        &.priority-normal {
+          background-color: var(--color-info);
+          color: white;
+        }
+
+        &.priority-low {
+          background-color: var(--color-success);
+          color: white;
+        }
+      }
+    }
+
+    mat-card-content {
+      padding: 24px 16px;
+
+      .content-container {
+        margin-bottom: 24px;
+      }
+
+      .content-text {
+        font-size: 16px;
+        line-height: 1.6;
+        white-space: pre-line; // Preserve line breaks in content
+      }
+
+      .expires-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--color-text-secondary);
+        font-size: 14px;
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid var(--color-border);
+
+        mat-icon {
+          font-size: 18px;
+          height: 18px;
+          width: 18px;
+        }
+      }
+    }
+
+    .acknowledgement-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background-color: rgba(var(--color-success-rgb), 0.1);
+      color: var(--color-success);
+      font-weight: 500;
+      border-top: 1px solid rgba(var(--color-success-rgb), 0.2);
+    }
+  }
+}
+
+.action-button {
+  margin-left: 8px;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .announcement-container {
+    .meta-info {
+      flex-direction: column;
+    }
+  }
+}

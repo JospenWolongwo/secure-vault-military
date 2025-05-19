@@ -203,6 +203,7 @@
     "MENU": {
       "DASHBOARD": "Dashboard",
       "DOCUMENTS": "Documents",
+      "COMMUNICATIONS": "Announcements",
       "ANALYTICS": "Analytics",
       "NOTIFICATIONS": "Notifications",
       "SETTINGS": "Settings",
@@ -225,9 +226,80 @@
       "HELP_CENTER": "Help Center"
     }
   },
+  "COMMUNICATIONS": {
+    "BOARD": {
+      "TITLE": "Announcements",
+      "SUBTITLE": "Stay informed with official communications",
+      "NEW_ANNOUNCEMENT": "New Announcement",
+      "CREATE_NEW": "Create a new announcement",
+      "SEARCH_PLACEHOLDER": "Search in announcements",
+      "PRIORITY": "Priority",
+      "STATUS": "Status",
+      "NO_ANNOUNCEMENTS": "No announcements available",
+      "CHECK_BACK": "Check back later for new announcements",
+      "CREATE_FIRST": "Create First Announcement",
+      "NO_RESULTS": "No results found",
+      "TRY_DIFFERENT_FILTERS": "Try different search terms or filters"
+    },
+    "DETAIL": {
+      "PUBLISHED": "Published on {{date}}",
+      "ACKNOWLEDGE": "Acknowledge",
+      "ACKNOWLEDGED_ON": "Acknowledged on {{date}}",
+      "EXPIRES": "Expires on {{date}}"
+    },
+    "CREATE": {
+      "TITLE": "Create Announcement",
+      "SUBTITLE": "Create a new official announcement",
+      "TITLE_FIELD": "Announcement Title",
+      "CONTENT": "Content",
+      "PRIORITY": "Priority",
+      "CATEGORY": "Category (optional)",
+      "PUBLISH_IMMEDIATELY": "Publish immediately",
+      "EXPIRES_AT": "Expiration date",
+      "EXPIRES_HINT": "Leave empty for no expiration",
+      "RECIPIENTS_INFO": "This announcement will be sent to all users of the platform",
+      "SUBMIT": "Publish Announcement"
+    },
+    "PRIORITY": {
+      "LOW": "Low",
+      "NORMAL": "Normal",
+      "HIGH": "High",
+      "URGENT": "Urgent"
+    },
+    "STATUS": {
+      "READ": "Read",
+      "UNREAD": "Unread",
+      "ACKNOWLEDGED": "Acknowledged"
+    },
+    "DELETE": {
+      "TITLE": "Delete Announcement",
+      "CONFIRM": "Are you sure you want to delete this announcement? This action cannot be undone."
+    },
+    "SUCCESS": {
+      "CREATED": "Announcement created successfully",
+      "UPDATED": "Announcement updated successfully",
+      "DELETED": "Announcement deleted successfully",
+      "ACKNOWLEDGED": "Announcement acknowledged",
+      "ASSIGNED": "Recipients assigned successfully"
+    },
+    "ERRORS": {
+      "LOAD_FAILED": "Failed to load announcements",
+      "CREATE_FAILED": "Failed to create announcement",
+      "UPDATE_FAILED": "Failed to update announcement",
+      "DELETE_FAILED": "Failed to delete announcement",
+      "NOT_FOUND": "Announcement not found",
+      "ASSIGN_FAILED": "Failed to assign recipients"
+    }
+  },
   "COMMON": {
     "BACK_TO_LOGIN": "Back to Login",
     "LOADING": "Loading...",
+    "SEARCH": "Search",
+    "ALL": "All",
+    "VIEW_DETAILS": "View Details",
+    "CANCEL": "Cancel",
+    "DELETE": "Delete",
+    "EDIT": "Edit",
     "ERRORS": {
       "GENERIC": "An error occurred. Please try again later.",
       "NETWORK": "Unable to connect to the server. Please check your connection.",

@@ -1,0 +1,101 @@
+<app-page-header
+  [title]="'COMMUNICATIONS.CREATE.TITLE' | translate"
+  [subtitle]="'COMMUNICATIONS.CREATE.SUBTITLE' | translate"
+  icon="campaign"
+  [showBackButton]="true"
+  backTo="/communications"
+>
+</app-page-header>
+
+<div class="create-announcement-container">
+  <mat-card class="form-card">
+    <form [formGroup]="announcementForm" (ngSubmit)="onSubmit()">
+      <mat-card-content>
+        <!-- Title -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'COMMUNICATIONS.CREATE.TITLE_FIELD' | translate }}</mat-label>
+          <input matInput formControlName="title" required>
+          <mat-error *ngIf="announcementForm.get('title')?.hasError('required')">
+            {{ 'COMMON.VALIDATION.REQUIRED' | translate }}
+          </mat-error>
+          <mat-error *ngIf="announcementForm.get('title')?.hasError('maxlength')">
+            {{ 'COMMON.VALIDATION.MAX_LENGTH' | translate: { length: 100 } }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Content -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ 'COMMUNICATIONS.CREATE.CONTENT' | translate }}</mat-label>
+          <textarea matInput formControlName="content" rows="8" required></textarea>
+          <mat-error *ngIf="announcementForm.get('content')?.hasError('required')">
+            {{ 'COMMON.VALIDATION.REQUIRED' | translate }}
+          </mat-error>
+          <mat-error *ngIf="announcementForm.get('content')?.hasError('maxlength')">
+            {{ 'COMMON.VALIDATION.MAX_LENGTH' | translate: { length: 5000 } }}
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form-row">
+          <!-- Priority -->
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'COMMUNICATIONS.CREATE.PRIORITY' | translate }}</mat-label>
+            <mat-select formControlName="priority" required>
+              <mat-option *ngFor="let priority of priorities" [value]="priority.value">
+                {{ priority.label | translate }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Category -->
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'COMMUNICATIONS.CREATE.CATEGORY' | translate }}</mat-label>
+            <input matInput formControlName="category">
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <!-- Publish Status -->
+          <mat-checkbox formControlName="is_published" color="primary">
+            {{ 'COMMUNICATIONS.CREATE.PUBLISH_IMMEDIATELY' | translate }}
+          </mat-checkbox>
+
+          <!-- Expiration Date -->
+          <mat-form-field appearance="outline">
+            <mat-label>{{ 'COMMUNICATIONS.CREATE.EXPIRES_AT' | translate }}</mat-label>
+            <input matInput [matDatepicker]="expiryPicker" formControlName="expires_at">
+            <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
+            <mat-datepicker #expiryPicker></mat-datepicker>
+            <mat-hint>{{ 'COMMUNICATIONS.CREATE.EXPIRES_HINT' | translate }}</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <!-- Recipient Selection would go here in a more advanced implementation -->
+        <div class="recipients-info">
+          <mat-icon>info</mat-icon>
+          {{ 'COMMUNICATIONS.CREATE.RECIPIENTS_INFO' | translate }}
+        </div>
+      </mat-card-content>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-actions align="end">
+        <button type="button" mat-button (click)="onCancel()">
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button 
+          type="submit" 
+          mat-flat-button 
+          color="primary"
+          [disabled]="isSubmitting"
+        >
+          <mat-icon>send</mat-icon>
+          {{ 'COMMUNICATIONS.CREATE.SUBMIT' | translate }}
+        </button>
+      </mat-card-actions>
+
+      <mat-card-footer *ngIf="isSubmitting">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </mat-card-footer>
+    </form>
+  </mat-card>
+</div>
