@@ -118,6 +118,10 @@ yarn-error.log*
 # Production
 /dist
 
+# Netlify
+.netlify
+netlify.log
+
 # Debug logs from npm
 npm-debug.log*
 
