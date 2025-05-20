@@ -1,6 +1,12 @@
 # SecureVault Military (SVM)
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/YOUR-BADGE-ID/deploy-status)](https://app.netlify.com/sites/secure-vault-military/deploys)
+
+**Live Demo:** [https://secure-vault-military.netlify.app/dashboard](https://secure-vault-military.netlify.app/dashboard)
+
 SecureVault Military (SVM) is a secure document storage and communication platform designed specifically for military personnel, featuring end-to-end encryption, role-based access control, and secure messaging.
+
+![Dashboard Overview](src/assets/screenshots/dashboard-view.png)
 
 ## Features
 
@@ -90,3 +96,28 @@ Please report any security issues to jospenwolongwo@gmail.com
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Screenshots
+
+### Dashboard
+
+![Dashboard View](src/assets/screenshots/dashboard-view.png)
+
+### Document Management
+
+![Documents View](src/assets/screenshots/documents-view.png)
+
+### Announcements
+
+![Announcements View](src/assets/screenshots/announcements-view.png)
+
+### Mobile Experience
+
+![Mobile View](src/assets/screenshots/mobile-view.png)
+
+## Contact
+
+- **Developer**: Jospen Wolongwo
+- **Email**: [jospenwolongwo@gmail.com](mailto:jospenwolongwo@gmail.com)
+- **Website**: [jospenwolongwo.com](https://jospenwolongwo.com)
+- **GitHub**: [JospenWolongwo](https://github.com/JospenWolongwo)
